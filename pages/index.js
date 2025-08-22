@@ -73,7 +73,7 @@ export default function Home() {
   );
 }
 
-// Componente demo de grilla
+// Grilla de ejemplo con 3 proyectos
 function GridDemo() {
   const items = [
     {
