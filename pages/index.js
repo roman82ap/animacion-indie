@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useMemo, useState } from "react";
-import SERIES from "@/data/series";
+import SERIES from "../data/series";
 
 export default function Home() {
   const [query, setQuery] = useState("");
