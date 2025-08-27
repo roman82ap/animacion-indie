@@ -1,12 +1,9 @@
-// data/youtube.js
-// Cambia los IDs y títulos cuando quieras
 export const YT_VIDEOS = [
-  { id: "ScMzIvxBSi4", title: "Trailer 1" },
-  { id: "dQw4w9WgXcQ", title: "Trailer 2" },
-  { id: "l482T0yNkeo", title: "Trailer 3" },
-  { id: "aqz-KE-bpKQ", title: "Trailer 4" },
+  { id: "Jro1TkqpEXg", title: "Trailer 1" },
+  { id: "lS8Is7zlJC0", title: "Trailer 2" },
+  { id: "7QF7j8axtl4", title: "Trailer 3" },
+  { id: "8pr352T1Ae4", title: "El Crujido – Clip" },
 ];
 
-// Helper para obtener thumb HQ de YouTube
+// Miniaturas HQ de YouTube
 export const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-// o `https://img.youtube.com/vi/${id}/hqdefault.jpg`
