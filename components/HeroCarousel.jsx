@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
-export default function HeroCarousel({ items = [], auto = true, interval = 6000 }) {
+export default function HeroCarousel({ items = [], auto = true, interval = 6000, showCounter = true, showArrows = true }) {
   const total = items.length;
   const [i, setI] = useState(0);
 
-  // Avanzar
   const next = () => setI((p) => (p + 1) % total);
   const prev = () => setI((p) => (p - 1 + total) % total);
 
-  // Autoplay
   useEffect(() => {
     if (!auto || total <= 1) return;
     const t = setInterval(next, interval);
@@ -21,28 +19,28 @@ export default function HeroCarousel({ items = [], auto = true, interval = 6000 
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-neutral-800">
-  {/* relación de aspecto 16:6 aprox */}
-  <div className="relative w-full" style={{ aspectRatio: '16 / 6' }}>
-    <img
-      src={current.banner}
-      alt={current.title}
-      className="absolute inset-0 h-full w-full object-cover"
-    />
-    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/0" />
-  </div>
-
-  {/* ... título, badges, contador, flechas ... */}
-</div>
-
-
-        {/* Indicador 01/13 */}
-        <div className="absolute left-4 top-4 bg-black/70 backdrop-blur px-2.5 py-1.5 rounded-md text-xs">
-          {String(i + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
+      {/* Contenedor del banner (solo imagen) */}
+      <a href={current.href || "#"} className="block">
+        <div className="relative w-full" style={{ aspectRatio: "16 / 6" }}>
+          <img
+            src={current.banner}
+            alt={current.title || ""}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          {/* Si quieres eliminar el oscurecido, borra el div siguiente */}
+          {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" /> */}
         </div>
       </a>
 
-      {/* Flechas */}
-      {total > 1 && (
+      {/* Indicador 01/03 (opcional) */}
+      {showCounter && (
+        <div className="absolute left-4 top-4 bg-black/70 backdrop-blur px-2.5 py-1.5 rounded-md text-xs">
+          {String(i + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
+        </div>
+      )}
+
+      {/* Flechas (opcional) */}
+      {showArrows && total > 1 && (
         <>
           <button
             aria-label="Anterior"
@@ -60,6 +58,10 @@ export default function HeroCarousel({ items = [], auto = true, interval = 6000 
           </button>
         </>
       )}
+    </div>
+  );
+}
+
     </div>
   );
 }
