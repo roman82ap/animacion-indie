@@ -1,19 +1,32 @@
 // pages/index.js
 import path from "path";
 import fs from "fs";
-import HeroCarousel from "../components/HeroCarousel"; // tu carrusel "limpio"
+
+import TopTabs from "../components/TopTabs";
+import YouTubeGrid from "../components/YouTubeGrid";
+import { YT_VIDEOS } from "../data/youtube";
+
+// Asegúrate que el nombre coincida con tu archivo de carrusel "limpio"
+import HeroCarousel from "../components/HeroCarousel";
 
 export default function Home({ banners }) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
+      {/* Botonera */}
+      <TopTabs />
+
+      {/* Carrusel de banners */}
       <HeroCarousel items={banners} auto interval={6000} showCounter showArrows />
-      {/* ...resto de la página... */}
+
+      {/* 4 miniaturas de YouTube */}
+      <YouTubeGrid videos={YT_VIDEOS} />
     </div>
   );
 }
 
+// Listado automático de /public/banner
 export async function getStaticProps() {
-  const bannersDir = path.join(process.cwd(), "public", "banner"); // carpeta singular
+  const bannersDir = path.join(process.cwd(), "public", "banner");
   let files = [];
 
   try {
@@ -25,21 +38,20 @@ export async function getStaticProps() {
   const allowed = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif"]);
   const banners = files
     .filter((name) => allowed.has(path.extname(name).toLowerCase()))
-    .sort() // orden por nombre (FA-Banner-0001.png, etc.)
+    .sort()
     .map((name) => {
       const id = name.replace(path.extname(name), "");
       return {
         id,
-        title: id.replace(/[-_]+/g, " "), // opcional: título a partir del nombre
-        banner: `/banner/${name}`,       // ruta pública
-        href: "#",                       // si quieres que haga click a algún lado
-        badges: [],                      // no se usan, ya quitaste textos
+        title: id.replace(/[-_]+/g, " "),
+        banner: `/banner/${name}`,
+        href: "#",
+        badges: [],
       };
     });
 
   return {
     props: { banners },
-    // opcional: ISR para regenerar cada X seg (si usas API de subida)
     revalidate: 60,
   };
 }
