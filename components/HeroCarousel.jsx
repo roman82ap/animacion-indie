@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
-export default function HeroCarousel({ items = [], auto = true, interval = 6000, showCounter = true, showArrows = true }) {
+export default function HeroCarousel({
+  items = [],
+  auto = true,
+  interval = 6000,
+  showCounter = true,
+  showArrows = true,
+}) {
   const total = items.length;
   const [i, setI] = useState(0);
 
@@ -19,7 +25,7 @@ export default function HeroCarousel({ items = [], auto = true, interval = 6000,
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-neutral-800">
-      {/* Contenedor del banner (solo imagen) */}
+      {/* SOLO IMAGEN */}
       <a href={current.href || "#"} className="block">
         <div className="relative w-full" style={{ aspectRatio: "16 / 6" }}>
           <img
@@ -27,19 +33,19 @@ export default function HeroCarousel({ items = [], auto = true, interval = 6000,
             alt={current.title || ""}
             className="absolute inset-0 h-full w-full object-cover"
           />
-          {/* Si quieres eliminar el oscurecido, borra el div siguiente */}
+          {/* Si no quieres ningún oscurecido, deja esto comentado o elimínalo */}
           {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" /> */}
         </div>
       </a>
 
-      {/* Indicador 01/03 (opcional) */}
+      {/* Contador opcional */}
       {showCounter && (
         <div className="absolute left-4 top-4 bg-black/70 backdrop-blur px-2.5 py-1.5 rounded-md text-xs">
           {String(i + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
         </div>
       )}
 
-      {/* Flechas (opcional) */}
+      {/* Flechas opcionales */}
       {showArrows && total > 1 && (
         <>
           <button
@@ -58,10 +64,6 @@ export default function HeroCarousel({ items = [], auto = true, interval = 6000,
           </button>
         </>
       )}
-    </div>
-  );
-}
-
     </div>
   );
 }
