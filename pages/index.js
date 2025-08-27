@@ -1,122 +1,45 @@
-import { useState } from "react";
-import HeroCarousel from "../components/HeroCarousel";
-import ThumbCard from "../components/ThumbCard";
+// pages/index.js
+import path from "path";
+import fs from "fs";
+import HeroCarousel from "../components/HeroCarousel"; // tu carrusel "limpio"
 
-const TABS = ["Series", "Películas", "Cortos", "Trailers"];
-
-const HERO_DATA = [
-  {
-    id: "fa1",
-    title: "Ecos del Vacío",
-    banner: "/banner/FA-Banner-0001.png",
-    href: "/serie/ecos-del-vacio",
-    badges: ["Serie", "Sci-Fi", "2D"],
-  },
-  {
-    id: "fa2",
-    title: "Ciudad Espectral",
-    banner: "/banner/FA-Banner-0002.png",
-    href: "/pelicula/ciudad-espectral",
-    badges: ["Película", "Terror", "3D"],
-  },
-  {
-    id: "crujido",
-    title: "El Crujido",
-    banner: "/banner/Crujido-Banner-001.png",
-    href: "/serie/el-crujido",
-    badges: ["Serie", "Misterio", "2D"],
-  },
-];
-
-const HIGHLIGHTS = [
-  {
-    id: "m1",
-    title: "Mate & Monstruos",
-    thumb: "/thumbs/mate.jpg",
-    href: "/corto/mate-y-monstruos",
-    tag: "Corto",
-    meta: "Comedia • 2D",
-  },
-  {
-    id: "m2",
-    title: "Helheim Zero",
-    thumb: "/thumbs/helheim.jpg",
-    href: "/serie/helheim-zero",
-    tag: "Serie",
-    meta: "Acción • 3D",
-  },
-  {
-    id: "m3",
-    title: "Teaser — Nexo 7",
-    thumb: "/thumbs/nexo.jpg",
-    href: "/trailer/nexo-7",
-    tag: "Trailer",
-    meta: "Sci-Fi • Híbrido",
-  },
-  {
-    id: "m4",
-    title: "Bosque de Humo",
-    thumb: "/thumbs/bosque.jpg",
-    href: "/pelicula/bosque-de-humo",
-    tag: "Película",
-    meta: "Misterio • 2D",
-  },
-  {
-    id: "m5",
-    title: "Anomalía 03",
-    thumb: "/thumbs/anomalia.jpg",
-    href: "/serie/anomalia-03",
-    tag: "Serie",
-    meta: "Thriller • 2D",
-  },
-];
-
-export default function Home() {
-  const [tab, setTab] = useState(TABS[0]);
-
+export default function Home({ banners }) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
-      {/* Tabs arriba del banner */}
-      <div className="flex gap-2 mb-4 flex-wrap">
-        {TABS.map((t) => {
-          const active = t === tab;
-          return (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`px-4 py-2 rounded-full text-sm border transition ${
-                active
-                  ? "bg-fuchsia-600 border-fuchsia-500"
-                  : "bg-neutral-900/60 border-neutral-800 hover:border-neutral-700"
-              }`}
-            >
-              {t}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Hero */}
-      <HeroCarousel items={HERO_DATA} />
-
-      {/* Destacados (debajo del banner) */}
-      <section className="mt-6">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-bold">Destacados</h2>
-          <a href="/series" className="text-sm text-fuchsia-400 hover:underline">
-            Ver todos →
-          </a>
-        </div>
-
-        {/* Carril horizontal (scroll) */}
-        <div className="flex gap-3 overflow-x-auto pb-2 pr-1 snap-x">
-          {HIGHLIGHTS.map((it) => (
-            <div key={it.id} className="snap-start">
-              <ThumbCard item={it} />
-            </div>
-          ))}
-        </div>
-      </section>
+      <HeroCarousel items={banners} auto interval={6000} showCounter showArrows />
+      {/* ...resto de la página... */}
     </div>
   );
+}
+
+export async function getStaticProps() {
+  const bannersDir = path.join(process.cwd(), "public", "banner"); // carpeta singular
+  let files = [];
+
+  try {
+    files = await fs.promises.readdir(bannersDir);
+  } catch (e) {
+    console.warn("No se pudo leer /public/banner:", e.message);
+  }
+
+  const allowed = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif"]);
+  const banners = files
+    .filter((name) => allowed.has(path.extname(name).toLowerCase()))
+    .sort() // orden por nombre (FA-Banner-0001.png, etc.)
+    .map((name) => {
+      const id = name.replace(path.extname(name), "");
+      return {
+        id,
+        title: id.replace(/[-_]+/g, " "), // opcional: título a partir del nombre
+        banner: `/banner/${name}`,       // ruta pública
+        href: "#",                       // si quieres que haga click a algún lado
+        badges: [],                      // no se usan, ya quitaste textos
+      };
+    });
+
+  return {
+    props: { banners },
+    // opcional: ISR para regenerar cada X seg (si usas API de subida)
+    revalidate: 60,
+  };
 }
