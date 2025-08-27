@@ -1,0 +1,17 @@
+import Image from "next/image";
+
+const banners = [
+  "/banners/series/banner-ecos.jpg",
+  "/banners/series/banner-ciudad.jpg",
+  "/banners/series/banner-huesos.jpg",
+];
+
+export default function Carousel() {
+  return (
+    <div className="carousel">
+      {banners.map((src, i) => (
+        <Image key={i} src={src} alt={`Banner ${i}`} width={1200} height={500} />
+      ))}
+    </div>
+  );
+}
