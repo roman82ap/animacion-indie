@@ -1,3 +1,4 @@
+// components/YouTubeGrid.jsx
 import { ytThumb } from "../data/youtube";
 
 export default function YouTubeGrid({ videos = [] }) {
@@ -6,7 +7,7 @@ export default function YouTubeGrid({ videos = [] }) {
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-lg font-bold">Últimos trailers</h2>
         <a
-          href="https://www.youtube.com/@tu_canal"
+          href="https://www.youtube.com/"
           target="_blank"
           rel="noreferrer"
           className="text-sm text-fuchsia-400 hover:underline"
@@ -32,7 +33,6 @@ export default function YouTubeGrid({ videos = [] }) {
               loading="lazy"
             />
 
-            {/* Play overlay */}
             <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition grid place-items-center">
               <div className="h-12 w-12 rounded-full bg-white/90 text-black grid place-items-center text-xl font-bold">
                 ▶
