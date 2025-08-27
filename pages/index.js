@@ -6,25 +6,25 @@ const TABS = ["Series", "Películas", "Cortos", "Trailers"];
 
 const HERO_DATA = [
   {
-    id: "ecos",
+    id: "fa1",
     title: "Ecos del Vacío",
-    banner: "/banners/ecos.jpg",        // /public/banners/...
+    banner: "/banner/FA-Banner-0001.png",
     href: "/serie/ecos-del-vacio",
     badges: ["Serie", "Sci-Fi", "2D"],
   },
   {
-    id: "ciudad",
+    id: "fa2",
     title: "Ciudad Espectral",
-    banner: "/banners/ciudad.jpg",
+    banner: "/banner/FA-Banner-0002.png",
     href: "/pelicula/ciudad-espectral",
     badges: ["Película", "Terror", "3D"],
   },
   {
-    id: "huesos",
-    title: "Huesos y Tinta",
-    banner: "/banners/huesos.jpg",
-    href: "/serie/huesos-y-tinta",
-    badges: ["En desarrollo", "Fantasía", "Híbrido"],
+    id: "crujido",
+    title: "El Crujido",
+    banner: "/banner/Crujido-Banner-001.png",
+    href: "/serie/el-crujido",
+    badges: ["Serie", "Misterio", "2D"],
   },
 ];
 
