@@ -21,33 +21,19 @@ export default function HeroCarousel({ items = [], auto = true, interval = 6000 
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-neutral-800">
-      {/* Imagen */}
-      <a href={current.href || "#"} className="block group">
-        <div className="relative aspect-[16/7] w-full">
-          <img
-            src={current.banner}
-            alt={current.title}
-            className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.02] transition"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/0" />
-        </div>
+  {/* relación de aspecto 16:6 aprox */}
+  <div className="relative w-full" style={{ aspectRatio: '16 / 6' }}>
+    <img
+      src={current.banner}
+      alt={current.title}
+      className="absolute inset-0 h-full w-full object-cover"
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/0" />
+  </div>
 
-        {/* Texto sobre el banner */}
-        <div className="absolute left-6 bottom-6 sm:left-8 sm:bottom-8">
-          <h2 className="text-3xl sm:text-5xl font-extrabold">{current.title}</h2>
-          {current.badges?.length ? (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {current.badges.map((b) => (
-                <span
-                  key={b}
-                  className="text-xs px-2 py-1 rounded-md bg-black/60 border border-neutral-700"
-                >
-                  {b}
-                </span>
-              ))}
-            </div>
-          ) : null}
-        </div>
+  {/* ... título, badges, contador, flechas ... */}
+</div>
+
 
         {/* Indicador 01/13 */}
         <div className="absolute left-4 top-4 bg-black/70 backdrop-blur px-2.5 py-1.5 rounded-md text-xs">
