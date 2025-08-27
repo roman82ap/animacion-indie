@@ -1,3 +1,4 @@
+// components/TopTabs.jsx
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -20,9 +21,10 @@ export default function TopTabs() {
           <Link key={t.href} href={t.href} className="group">
             <span
               className={`inline-block px-4 py-2 rounded-full text-sm border transition
-              ${active
-                ? "bg-fuchsia-600 border-fuchsia-500 text-white"
-                : "bg-neutral-900/60 border-neutral-800 text-neutral-200 hover:border-neutral-700"
+              ${
+                active
+                  ? "bg-fuchsia-600 border-fuchsia-500 text-white"
+                  : "bg-neutral-900/60 border-neutral-800 text-neutral-200 hover:border-neutral-700"
               }`}
             >
               {t.label}
