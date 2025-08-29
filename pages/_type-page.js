@@ -1,42 +1,66 @@
 // pages/_type-page.js
-import { getAllWorks } from "@/lib/server/content";
+// Componente reutilizable para Series, Cortos, Películas, Trailers.
 
-// UI muy simple por ahora (luego metemos grilla, filtros, etc.)
-export default function TypePage({ title, items }) {
+import Link from "next/link";
+
+// Mini card simple para evitar dependencias
+function Card({ item }) {
+  const thumb =
+    item.thumb ||
+    (item.episodes && item.episodes[0]?.youtubeId
+      ? `https://i.ytimg.com/vi/${item.episodes[0].youtubeId}/hqdefault.jpg`
+      : "/Logo.png");
+
   return (
-    <main className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">{title}</h1>
-
-      {items?.length ? (
-        <ul className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {items.map((w) => (
-            <li key={w.slug} className="rounded-lg bg-neutral-900 border border-neutral-800 p-4">
-              <a href={`/obra/${w.slug}`} className="block">
-                <div className="aspect-video rounded bg-neutral-800 mb-3" />
-                <div className="font-semibold">{w.title}</div>
-                <div className="text-sm text-neutral-400">
-                  {(w.genres || []).join(", ")}
-                </div>
-              </a>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-neutral-400">Pronto…</p>
-      )}
-    </main>
+    <Link
+      href={`/obra/${item.slug}`}
+      className="block rounded-xl overflow-hidden bg-neutral-800 hover:bg-neutral-700 transition"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={thumb} alt={item.title} className="w-full aspect-video object-cover" />
+      <div className="p-3">
+        <h3 className="text-white font-semibold text-sm line-clamp-2">{item.title}</h3>
+        <div className="text-xs text-neutral-400 mt-1">
+          {item.type} • {item.medium || "—"}
+          {item.genres?.length ? (
+            <> • {item.genres.slice(0, 2).join(", ")}{item.genres.length > 2 ? "…" : ""}</>
+          ) : null}
+        </div>
+      </div>
+    </Link>
   );
 }
 
-// ---------- Helper para las páginas por tipo ----------
-export async function getStaticPropsForType(typeSingular, pageTitle) {
+export default function TypePage({ pageTitle, items }) {
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6">{pageTitle}</h1>
+
+      {items.length === 0 ? (
+        <p className="text-neutral-400">No hay contenido todavía.</p>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {items.map((it) => (
+            <Card key={it.slug} item={it} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Utilidad compartida para cada página de tipo:
+export async function getStaticPropsForType(typeName, pageTitle) {
+  // import dinámico para no empaquetar 'fs' en cliente
+  const { getAllWorks } = await import("../lib/server/content");
   const all = await getAllWorks();
+
   const items = (all || [])
-    .filter((x) => (x.type || "").toLowerCase() === typeSingular.toLowerCase())
-    .sort((a, b) => a.title.localeCompare(b.title));
+    .filter((x) => x.type === typeName)
+    .sort((a, b) => (a.title || "").localeCompare(b.title || ""));
 
   return {
-    props: { title: pageTitle, items },
-    revalidate: 60,
+    props: { pageTitle, items },
+    revalidate: 60, // ISR
   };
 }
