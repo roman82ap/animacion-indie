@@ -1,10 +1,10 @@
-import TopTabs from "../components/TopTabs";
+// pages/peliculas.js
+import TypePage, { getStaticPropsForType } from "./_type-page";
 
-export default function Page() {
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
-      <TopTabs />
-      <h1 className="text-2xl font-bold">Pronto…</h1>
-    </div>
-  );
+export default function Page(props) {
+  return <TypePage {...props} />;
+}
+
+export async function getStaticProps() {
+  return getStaticPropsForType("Película", "Películas");
 }
