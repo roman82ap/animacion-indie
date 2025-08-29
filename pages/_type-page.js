@@ -1,51 +1,42 @@
 // pages/_type-page.js
-import React from "react";
-import TopTabs from "@/components/TopTabs";        // tus tabs arriba
-import YouTubeGrid from "@/components/YouTubeGrid"; // grid de miniaturas
-import {
-  getAllWorksByType,
-  getAllGenresForType,
-  ytThumb,
-} from "@/lib/server/content";
+import { getAllWorks } from "@/lib/server/content";
 
-export default function TypePage({ title, items, genres }) {
+// UI muy simple por ahora (luego metemos grilla, filtros, etc.)
+export default function TypePage({ title, items }) {
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <TopTabs />
+    <main className="max-w-7xl mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">{title}</h1>
 
-      {/* Filtros por género */}
-      {genres.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6">
-          {genres.map((g) => (
-            <span key={g} className="px-3 py-1 rounded-full bg-neutral-800 text-neutral-200 text-sm">
-              {g}
-            </span>
+      {items?.length ? (
+        <ul className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {items.map((w) => (
+            <li key={w.slug} className="rounded-lg bg-neutral-900 border border-neutral-800 p-4">
+              <a href={`/obra/${w.slug}`} className="block">
+                <div className="aspect-video rounded bg-neutral-800 mb-3" />
+                <div className="font-semibold">{w.title}</div>
+                <div className="text-sm text-neutral-400">
+                  {(w.genres || []).join(", ")}
+                </div>
+              </a>
+            </li>
           ))}
-        </div>
+        </ul>
+      ) : (
+        <p className="text-neutral-400">Pronto…</p>
       )}
-
-      <h1 className="text-2xl font-bold mb-4">{title}</h1>
-
-      <YouTubeGrid items={items} />
-    </div>
+    </main>
   );
 }
 
-export async function getStaticPropsForType(type, titleText) {
-  const items = getAllWorksByType(type).map((w) => ({
-    slug: w.slug,
-    title: w.title,
-    youtubeId: (w.episodes?.[0]?.youtubeId) || "",
-    thumb: w.episodes?.[0]?.youtubeId ? ytThumb(w.episodes[0].youtubeId) : "",
-  }));
+// ---------- Helper para las páginas por tipo ----------
+export async function getStaticPropsForType(typeSingular, pageTitle) {
+  const all = await getAllWorks();
+  const items = (all || [])
+    .filter((x) => (x.type || "").toLowerCase() === typeSingular.toLowerCase())
+    .sort((a, b) => a.title.localeCompare(b.title));
 
-  const genres = getAllGenresForType(type);
   return {
-    props: {
-      title: titleText,
-      items,
-      genres,
-    },
+    props: { title: pageTitle, items },
     revalidate: 60,
   };
 }
