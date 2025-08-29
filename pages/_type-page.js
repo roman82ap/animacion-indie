@@ -1,47 +1,44 @@
 // pages/_type-page.js
-// Componente reutilizable para Series, Cortos, Películas, Trailers.
+// Plantilla genérica de páginas por tipo
 
-import Link from "next/link";
+import React from "react";
 
-// Mini card simple para evitar dependencias
-function Card({ item }) {
-  const thumb =
-    item.thumb ||
-    (item.episodes && item.episodes[0]?.youtubeId
-      ? `https://i.ytimg.com/vi/${item.episodes[0].youtubeId}/hqdefault.jpg`
-      : "/Logo.png");
+// Tarjetas simples
+function Thumb({ item }) {
+  const first = item.episodes && item.episodes[0];
+  const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  const thumb = first?.youtubeId ? ytThumb(first.youtubeId) : "/Logo.png";
+
+  const href = `/obra/${item.slug}`; // ajusta si tu [slug].js espera otro slug
 
   return (
-    <Link
-      href={`/obra/${item.slug}`}
-      className="block rounded-xl overflow-hidden bg-neutral-800 hover:bg-neutral-700 transition"
+    <a
+      href={href}
+      className="block rounded-xl overflow-hidden bg-neutral-900/60 ring-1 ring-white/10 hover:ring-fuchsia-500 transition"
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={thumb} alt={item.title} className="w-full aspect-video object-cover" />
-      <div className="p-3">
-        <h3 className="text-white font-semibold text-sm line-clamp-2">{item.title}</h3>
-        <div className="text-xs text-neutral-400 mt-1">
-          {item.type} • {item.medium || "—"}
-          {item.genres?.length ? (
-            <> • {item.genres.slice(0, 2).join(", ")}{item.genres.length > 2 ? "…" : ""}</>
-          ) : null}
-        </div>
+      <div className="aspect-video bg-neutral-800">
+        <img src={thumb} alt={item.title} className="w-full h-full object-cover" />
       </div>
-    </Link>
+      <div className="p-3">
+        <h3 className="text-sm font-semibold text-white">{item.title}</h3>
+        <p className="text-xs text-neutral-400">
+          {(item.genres || []).join(" • ")}
+        </p>
+      </div>
+    </a>
   );
 }
 
-export default function TypePage({ pageTitle, items }) {
+function ContentGrid({ title, items }) {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6">{pageTitle}</h1>
-
+    <div className="mx-auto max-w-6xl px-4 py-6">
+      <h1 className="text-2xl font-bold mb-4">{title}</h1>
       {items.length === 0 ? (
-        <p className="text-neutral-400">No hay contenido todavía.</p>
+        <p className="text-neutral-400">Pronto…</p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {items.map((it) => (
-            <Card key={it.slug} item={it} />
+            <Thumb key={it.slug} item={it} />
           ))}
         </div>
       )}
@@ -49,18 +46,21 @@ export default function TypePage({ pageTitle, items }) {
   );
 }
 
-// Utilidad compartida para cada página de tipo:
-export async function getStaticPropsForType(typeName, pageTitle) {
-  // import dinámico para no empaquetar 'fs' en cliente
-  const { getAllWorks } = await import("../lib/server/content");
-  const all = await getAllWorks();
+export default function TypePage(props) {
+  return <ContentGrid title={props.pageTitle} items={props.items} />;
+}
 
-  const items = (all || [])
-    .filter((x) => x.type === typeName)
-    .sort((a, b) => (a.title || "").localeCompare(b.title || ""));
-
+// helper usado por cada página de tipo (series, películas, etc.)
+export async function getStaticPropsForType(typeSingular, pageTitle) {
+  // IMPORTANTE: import dinámico -> esto se ejecuta SOLO en build/servidor
+  const server = await import("../lib/server/content.js");
+  const all = server.getAllByType(typeSingular);
+  const items = [...all].sort((a, b) => a.title.localeCompare(b.title));
   return {
-    props: { pageTitle, items },
-    revalidate: 60, // ISR
+    props: {
+      pageTitle,
+      items,
+    },
+    revalidate: 60, // ISR opcional
   };
 }
