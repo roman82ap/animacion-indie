@@ -3,32 +3,29 @@ import path from "path";
 import fs from "fs";
 
 import TopTabs from "../components/TopTabs";
-import YouTubeGrid from "../components/YouTubeGrid";
-import { YT_VIDEOS } from "../data/youtube";
-
-// Asegúrate que el nombre coincida con tu archivo de carrusel "limpio"
 import HeroCarousel from "../components/HeroCarousel";
+import YouTubeGrid from "../components/YouTubeGrid";
+import { FEATURED } from "../data/catalog"; // 👈 los destacados vienen del catálogo
 
 export default function Home({ banners }) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
-      {/* Botonera */}
+      {/* Botonera arriba */}
       <TopTabs />
 
       {/* Carrusel de banners */}
       <HeroCarousel items={banners} auto interval={6000} showCounter showArrows />
 
-      {/* 4 miniaturas de YouTube */}
-      <YouTubeGrid videos={YT_VIDEOS} />
+      {/* Miniaturas de 4 obras destacadas */}
+      <YouTubeGrid items={FEATURED} />
     </div>
   );
 }
 
-// Listado automático de /public/banner
+// Genera la lista de banners automáticamente desde /public/banner
 export async function getStaticProps() {
   const bannersDir = path.join(process.cwd(), "public", "banner");
   let files = [];
-
   try {
     files = await fs.promises.readdir(bannersDir);
   } catch (e) {
@@ -39,19 +36,13 @@ export async function getStaticProps() {
   const banners = files
     .filter((name) => allowed.has(path.extname(name).toLowerCase()))
     .sort()
-    .map((name) => {
-      const id = name.replace(path.extname(name), "");
-      return {
-        id,
-        title: id.replace(/[-_]+/g, " "),
-        banner: `/banner/${name}`,
-        href: "#",
-        badges: [],
-      };
-    });
+    .map((name) => ({
+      id: name.replace(path.extname(name), ""),
+      title: name.replace(path.extname(name), "").replace(/[-_]+/g, " "),
+      banner: `/banner/${name}`,
+      href: "#",
+      badges: [],
+    }));
 
-  return {
-    props: { banners },
-    revalidate: 60,
-  };
+  return { props: { banners }, revalidate: 60 };
 }
