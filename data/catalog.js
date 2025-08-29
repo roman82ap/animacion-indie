@@ -1,108 +1,89 @@
 // data/catalog.js
-// ========================================================
-// Catálogo base de obras. Aquí defines todo tu contenido.
-// Puedes ir agregando más entradas dentro de CATALOG.
-// ========================================================
+import { getCreator } from "./creators";
+
+// ========== CATÁLOGO DE OBRAS ==========
+// type: "Serie" | "Corto" | "Película" | "Trailer"
+// medium: "2D" | "3D" | "Stop-motion" | "Híbrido"
 
 export const CATALOG = [
-  // -----------------------------------------------------
-  // 1) FUERZA ABUSIVA (UN SOLO SLUG CON VARIOS VIDEOS)
-  // -----------------------------------------------------
+  // 1) Obra con varios videos y con CREATOR
   {
     slug: "fuerza-abusiva",
     title: "Fuerza Abusiva",
-    type: "Serie",                // Serie | Corto | Película | Trailer
+    type: "Serie",
     medium: "3D",
     genres: ["Acción"],
-    year: 2024,
     description: "Proyecto indie de sci-fi / acción.",
-    creator: {
-      name: "Indie Studio",
-      channelUrl: "https://www.youtube.com/@TUCANAL", // cámbialo cuando lo tengas
-      socials: [
-        // { label: "YouTube", href: "https://www.youtube.com/@TUCANAL" },
-      ],
-      support: [
-        // { label: "Patreon", href: "https://patreon.com/..." },
-      ],
-    },
+    // Si hay creador:
+    creatorSlug: "indie-studio",
+    // Apoyo específico de la obra (si existe). Si no, tomará el del creador.
+    support: [
+      // { label: "Patreon", href: "https://patreon.com/fuerzaabusiva" },
+    ],
     episodes: [
-      // Puedes agregar todos los videos de esta serie aquí:
-      { id: "leoric-trailer",  title: "Leoric Trailer Oficial", youtubeId: "lS8Is7zlJC0", duration: "" },
-      { id: "trailer-oficial", title: "Trailer Oficial",        youtubeId: "7QF7j8axtl4", duration: "" },
-      // Ejemplo para futuros episodios:
-      // { id: "ep-01", title: "Episodio 1", youtubeId: "XXXXXXXXXXX" },
-      // { id: "ep-02", title: "Episodio 2", youtubeId: "YYYYYYYYYYY" },
+      { id: "leoric-trailer",  title: "Leoric Trailer Oficial", youtubeId: "lS8Is7zlJC0", kind: "trailer" },
+      { id: "trailer-oficial", title: "Trailer Oficial",        youtubeId: "7QF7j8axtl4", kind: "trailer" },
+      // { id: "ep-01", title: "Episodio 1", youtubeId: "XXXXXXXXXXX", kind: "episodio" },
     ],
   },
 
-  // -----------------------------------------------------
-  // 2) EL CRUJIDO
-  // -----------------------------------------------------
+  // 2) Obra con un video y con CREATOR
   {
     slug: "el-crujido",
     title: "El Crujido",
     type: "Serie",
     medium: "2D",
     genres: ["Misterio", "Terror"],
-    year: 2024,
     description: "Serie indie de misterio/terror.",
-    creator: {
-      name: "Crunch, el crujido",
-      channelUrl: "https://www.youtube.com/@elcrujido",
-      socials: [
-        { label: "YouTube", href: "https://www.youtube.com/watch?v=8pr352T1Ae4" },
-      ],
-      support: [],
-    },
+    creatorSlug: "crunch-el-crujido",
+    support: [
+      // { label: "Ko-fi", href: "https://ko-fi.com/..." },
+    ],
     episodes: [
-      { id: "ep1", title: "Clip / Trailer", youtubeId: "8pr352T1Ae4", duration: "" },
-      // Agrega más episodios con sus IDs de YouTube si los tienes
+      { id: "ep1", title: "Clip / Trailer", youtubeId: "8pr352T1Ae4", kind: "trailer" },
     ],
   },
 
-  // -----------------------------------------------------
-  // 3) HOLGAZANES Y DEMONIOS
-  // -----------------------------------------------------
+  // 3) Obra “huérfana” (video no oficial o sin datos del autor)
   {
     slug: "holgazanes-y-demonios",
     title: "Holgazanes y demonios – Episodio 1",
     type: "Serie",
     medium: "2D",
     genres: ["Comedia", "Fantasía"],
-    year: 2024,
-    description: "Una comedia animada de demonios y holgazanes.",
-    creator: { name: "Indie Studio", channelUrl: "", socials: [], support: [] },
+    description: "Comedia animada de demonios y holgazanes.",
+    // Sin creatorSlug => no muestra ficha de creador
     episodes: [
-      { id: "ep1", title: "Episodio 1", youtubeId: "Jro1TkqpEXg", duration: "" },
+      { id: "ep1", title: "Episodio 1", youtubeId: "Jro1TkqpEXg", kind: "episodio" },
     ],
   },
 ];
 
-// ========================================================
-// DESTACADOS (HOME)
-// Puedes cambiar los 4 que aparecen en la home.
-// Para obras con varios videos (como Fuerza Abusiva) puedes
-// pasar episodeId para abrir ese episodio concreto.
-// ========================================================
+// ========== DESTACADOS (HOME) ==========
 export const FEATURED = [
-  { slug: "el-crujido",            title: "El Crujido",                          youtubeId: "8pr352T1Ae4" },
-  { slug: "fuerza-abusiva",        title: "Fuerza Abusiva – Leoric Trailer",     youtubeId: "lS8Is7zlJC0", episodeId: "leoric-trailer" },
-  { slug: "fuerza-abusiva",        title: "Fuerza Abusiva – Trailer Oficial",    youtubeId: "7QF7j8axtl4", episodeId: "trailer-oficial" },
-  { slug: "holgazanes-y-demonios", title: "Holgazanes y demonios – Episodio 1", youtubeId: "Jro1TkqpEXg" },
+  // Pueden apuntar al mismo slug con episodeId distinto
+  { slug: "fuerza-abusiva",        title: "Fuerza Abusiva – Leoric Trailer",  youtubeId: "lS8Is7zlJC0", episodeId: "leoric-trailer" },
+  { slug: "fuerza-abusiva",        title: "Fuerza Abusiva – Trailer Oficial", youtubeId: "7QF7j8axtl4", episodeId: "trailer-oficial" },
+  { slug: "el-crujido",            title: "El Crujido",                        youtubeId: "8pr352T1Ae4" },
+  { slug: "holgazanes-y-demonios", title: "Holgazanes y demonios – Ep. 1",    youtubeId: "Jro1TkqpEXg" },
 ];
 
-// ========================================================
-// HELPERS
-// ========================================================
-
-// Miniatura de YouTube (usa hqdefault por mejor calidad)
+// ========== HELPERS ==========
 export const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 
-// Buscar una obra por slug
 export function getBySlug(slug) {
-  return CATALOG.find((x) => x.slug === slug) || null;
+  const obra = CATALOG.find((x) => x.slug === slug) || null;
+  if (!obra) return null;
+
+  // Resuelve creador si existe
+  const creator = obra.creatorSlug ? getCreator(obra.creatorSlug) : null;
+
+  // El bloque de apoyo preferente: primero el de la obra, luego el del creador.
+  const support = (obra.support && obra.support.length > 0)
+    ? obra.support
+    : (creator?.support || []);
+
+  return { ...obra, creator, support };
 }
 
-// Slugs para getStaticPaths en pages/obra/[slug].js
 export const ALL_SLUGS = CATALOG.map((x) => x.slug);
