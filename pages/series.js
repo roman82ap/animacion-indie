@@ -9,3 +9,4 @@ export async function getStaticProps() {
   return getStaticPropsForType("Serie", "Series");
 }
 
+
