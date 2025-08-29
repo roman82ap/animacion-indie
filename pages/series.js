@@ -8,5 +8,3 @@ export default function Page(props) {
 export async function getStaticProps() {
   return getStaticPropsForType("Serie", "Series");
 }
-
-
