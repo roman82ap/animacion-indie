@@ -1,35 +1,22 @@
 // components/TopTabs.jsx
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-const TABS = [
-  { label: "Inicio", href: "/" },
-  { label: "Series", href: "/series" },
-  { label: "Cortos", href: "/cortos" },
-  { label: "Películas", href: "/peliculas" },
-  { label: "Trailers", href: "/trailers" },
-];
-
-export default function TopTabs() {
-  const router = useRouter();
-
+export default function TopTabs({ items, active, onChange }) {
   return (
-    <div className="flex gap-2 mb-4 flex-wrap">
-      {TABS.map((t) => {
-        const active = router.pathname === t.href || (t.href === "/" && router.pathname === "/index");
+    <div className="flex gap-2 flex-wrap mb-4">
+      {items.map((g) => {
+        const isActive = g === active;
         return (
-          <Link key={t.href} href={t.href} className="group">
-            <span
-              className={`inline-block px-4 py-2 rounded-full text-sm border transition
-              ${
-                active
-                  ? "bg-fuchsia-600 border-fuchsia-500 text-white"
-                  : "bg-neutral-900/60 border-neutral-800 text-neutral-200 hover:border-neutral-700"
-              }`}
-            >
-              {t.label}
-            </span>
-          </Link>
+          <button
+            key={g}
+            onClick={() => onChange?.(g)}
+            className={
+              "px-3 py-1 rounded-full text-sm ring-1 transition " +
+              (isActive
+                ? "bg-fuchsia-600 text-white ring-fuchsia-500"
+                : "bg-neutral-900 text-neutral-300 ring-white/10 hover:ring-fuchsia-500")
+            }
+          >
+            {g}
+          </button>
         );
       })}
     </div>
