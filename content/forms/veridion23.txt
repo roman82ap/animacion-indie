@@ -1,0 +1,32 @@
+TIENE CREADOR: si
+CREADOR: veridion23
+
+REDES:
+- https://www.youtube.com/@veridion23
+- https://www.instagram.com/veridion23
+
+FINANCIACION:
+- https://www.patreon.com/veridion23
+- https://ko-fi.com/veridion23
+
+----------------------------------------
+TIPO: trailer         # Serie | Corto | Película | Trailer | Huerfano
+NOMBRE: fuerza abusiva
+MEDIO: 3D             # 2D | 3D | Stop-motion | Híbrido
+GENERO: Accion, Comedia, Sci-Fi, Aventura
+DESCRIPCION: Un grupo elite se encarga de eliminar la amenaza.
+VIDEOS:
+- https://youtu.be/7QF7j8axtl4
+- https://www.youtube.com/watch?v=lS8Is7zlJC0
+# Si quieres títulos específicos por video, usa:
+# - title=Trailer Oficial | url=https://youtu.be/7QF7j8axtl4
+# - title=Leoric Trailer | url=https://www.youtube.com/watch?v=lS8Is7zlJC0
+
+----------------------------------------
+TIPO: Serie
+NOMBRE: Holgazanes y Demonios
+MEDIO: 2D
+GENERO: Accion, Comedia, Aventura, Fantasia
+DESCRIPCION: Un grupo de holgazanes es transportado a un mundo de fantasía y debe encontrar cómo volver.
+VIDEOS:
+- https://youtu.be/Jro1TkqpEXg
