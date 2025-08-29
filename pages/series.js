@@ -6,7 +6,7 @@ export default function SeriesPage({ items }) {
 }
 
 export async function getStaticProps() {
-  // Import dinámico para NO incluir 'fs' en el bundle del cliente
+  // Import dinámico: NO empaqueta 'fs' para el cliente
   const { getAllWorks } = await import("../lib/server/content");
   const all = await getAllWorks();
 
@@ -14,8 +14,6 @@ export async function getStaticProps() {
     .filter((x) => (x.type || "") === "Serie")
     .sort((a, b) => a.title.localeCompare(b.title));
 
-  return {
-    props: { items },
-    revalidate: 60,
-  };
+  return { props: { items }, revalidate: 60 };
 }
+
