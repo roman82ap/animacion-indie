@@ -59,9 +59,9 @@ export const CATALOG = [
 // Escoge 4 destacados (los que saldrán en la home)
 export const FEATURED = [
   { slug: "el-crujido", title: "El Crujido", youtubeId: "8pr352T1Ae4" },
-  { slug: "trailer-1", title: "Trailer 1", youtubeId: "Jro1TkqpEXg" },
-  { slug: "trailer-2", title: "Trailer 2", youtubeId: "lS8Is7zlJC0" },
-  { slug: "trailer-3", title: "Trailer 3", youtubeId: "7QF7j8axtl4" },
+  { slug: "holgazanes-y-demonios", title: "Holgazanes y demonios – Episodio 1", youtubeId: "Jro1TkqpEXg" },
+  { slug: "fuerza-abusiva-trailer-01", title: "Fuerza Abusiva – Leoric Trailer Oficial", youtubeId: "lS8Is7zlJC0" },
+  { slug: "fuerza-abusiva-trailer-02", title: "Fuerza Abusiva – Trailer Oficial", youtubeId: "7QF7j8axtl4" },
 ];
 
 // Helper para miniaturas de YouTube
