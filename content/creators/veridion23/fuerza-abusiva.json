@@ -1,0 +1,16 @@
+{
+  "slug": "fuerza-abusiva",
+  "title": "Fuerza Abusiva",
+  "type": "Serie",
+  "medium": "3D",
+  "genres": ["Acción"],
+  "description": "Proyecto indie de sci-fi / acción.",
+  "banner": "/works/fuerza-abusiva/banner.jpg",
+  "support": [
+    { "label": "Patreon", "href": "https://patreon.com/fuerzaabusiva" }
+  ],
+  "episodes": [
+    { "id": "leoric-trailer",  "title": "Leoric Trailer Oficial", "youtubeId": "lS8Is7zlJC0", "kind": "trailer" },
+    { "id": "trailer-oficial", "title": "Trailer Oficial",        "youtubeId": "7QF7j8axtl4", "kind": "trailer" }
+  ]
+}
