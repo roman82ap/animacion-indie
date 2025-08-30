@@ -9,7 +9,7 @@
       "description": "Un grupo elite se encarga de eliminar la amenaza.",
       "episodes": [
         { "id": "trailer-oficial", "title": "Trailer Oficial", "youtubeId": "7QF7j8axtl4" },
-        { "id": "trailer-leoric", "title": "Leoric Trailer", "youtubeId": "lS8Is7zlJC0" }
+        { "id": "trailer-leoric",  "title": "Leoric Trailer",  "youtubeId": "lS8Is7zlJC0" }
       ]
     },
     {
