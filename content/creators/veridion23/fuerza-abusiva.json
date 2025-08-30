@@ -1,0 +1,25 @@
+{
+  "slug": "fuerza-abusiva",
+  "title": "Fuerza Abusiva",
+  "type": "Trailer",
+  "medium": "3D",
+  "genres": ["Acción", "Comedia", "Sci-Fi", "Aventura"],
+  "description": "Un grupo elite se encarga de eliminar la amenaza.",
+  "banner": "/works/fuerza-abusiva/banner.jpg",
+  "support": [
+    { "label": "Patreon", "href": "https://www.patreon.com/veridion23" },
+    { "label": "Ko-fi", "href": "https://ko-fi.com/veridion23" }
+  ],
+  "episodes": [
+    {
+      "id": "trailer-oficial",
+      "title": "Trailer Oficial",
+      "youtubeId": "7QF7j8axtl4"
+    },
+    {
+      "id": "trailer-leoric",
+      "title": "Leoric Trailer",
+      "youtubeId": "lS8Is7zlJC0"
+    }
+  ]
+}
