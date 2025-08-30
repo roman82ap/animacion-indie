@@ -1,47 +1,49 @@
-// pages/_type-page.js
-// Plantilla genérica reutilizada por /series, /cortos, /peliculas, /trailers
+import { useRouter } from 'next/router'
+import Layout from '../components/Layout'
+import ContentGrid from '../components/ContentGrid'
+import FilterPills from '../components/FilterPills'
 
-import React from "react";
-import ContentGrid from "@/components/ContentGrid";
+export default function TypePage({ works, type }) {
+  const router = useRouter()
 
-function Thumb({ item }) {
-  const first = item.episodes?.[0];
-  const src = first?.youtubeId
-    ? `https://i.ytimg.com/vi/${first.youtubeId}/hqdefault.jpg`
-    : "/Logo.png";
-  const href = `/obra/${item.slug}`;
+  if (router.isFallback) {
+    return <div>Cargando...</div>
+  }
+
   return (
-    <a href={href} className="block rounded-xl overflow-hidden bg-neutral-800 hover:ring-1 hover:ring-fuchsia-500 transition">
-      <div className="aspect-video w-full bg-neutral-700">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img alt={item.title} src={src} className="w-full h-full object-cover" />
+    <Layout>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-3xl font-bold mb-6 capitalize">{type}</h1>
+        <FilterPills />
+        <ContentGrid works={works} />
       </div>
-      <div className="p-3 text-sm text-neutral-200">{item.title}</div>
-    </a>
-  );
+    </Layout>
+  )
 }
 
-export default function TypePage({ title, items }) {
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
-      <h1 className="text-2xl font-bold mb-4">{title}</h1>
-      {items?.length ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {items.map((it) => <Thumb key={it.slug} item={it} />)}
-        </div>
-      ) : (
-        <p>Pronto…</p>
-      )}
-    </div>
-  );
-}
+export async function getStaticProps({ params }) {
+  // Import dinámico: así evitamos que Vercel intente empaquetar 'fs' en el cliente
+  const { getAllWorks } = await import('../lib/server/content.js')
+  const all = await getAllWorks()
+  const type = params?.type || 'series'
 
-// Helper para obtener props por tipo SIN importar 'fs' al cliente
-export async function getStaticPropsForType(singularName, pageTitle) {
-  const { getWorksByType } = await import("@/lib/server/content");
-  const items = getWorksByType(singularName) || [];
+  const works = all.filter((work) => work.tipo?.toLowerCase() === type)
+
   return {
-    props: { title: pageTitle, items },
-    revalidate: 60
-  };
+    props: {
+      works,
+      type,
+    },
+  }
+}
+
+export async function getStaticPaths() {
+  const paths = ['series', 'cortos', 'peliculas', 'trailers'].map((type) => ({
+    params: { type },
+  }))
+
+  return {
+    paths,
+    fallback: true,
+  }
 }
