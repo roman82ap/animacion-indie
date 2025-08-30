@@ -1,0 +1,13 @@
+{
+  "slug": "veridion23",
+  "name": "Veridion23",
+  "socials": [
+    { "label": "YouTube", "href": "https://www.youtube.com/@veridion23" },
+    { "label": "Instagram", "href": "https://www.instagram.com/veridion23" }
+  ],
+  "support": [
+    { "label": "Patreon", "href": "https://www.patreon.com/veridion23" },
+    { "label": "Ko-fi", "href": "https://ko-fi.com/veridion23" }
+  ],
+  "avatar": "/creators/veridion23/avatar.png"
+}
