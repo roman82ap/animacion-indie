@@ -1,0 +1,35 @@
+TIENE CREADOR: si
+CREADOR: LINERS_CRUNCH
+
+REDES:
+- https://www.youtube.com/@veridion23
+- https://www.instagram.com/veridion23
+
+FINANCIACION:
+- https://www.paypal.me/linerscrunch
+
+
+----------------------------------------
+TIPO: Serie         # Serie | Corto | Película | Trailer | Huerfano
+NOMBRE: Crunch
+MEDIO: 2D             # 2D | 3D | Stop-motion | Híbrido
+GENERO: Accion, Comedia
+DESCRIPCION: Una serie animada completamente desde un celular..
+VIDEOS:
+- title=Crunch Episodio 01 | url=https://www.youtube.com/watch?v=8pr352T1Ae4&list=PLWuWQawMC8zDC0NJL_TsgLfuxzJrDuhpy&ab_channel=Crunch%2Celcrujido
+- title=Crunch Episodio 02 | url=https://www.youtube.com/watch?v=iK8kY6CWRp4&list=PLWuWQawMC8zDC0NJL_TsgLfuxzJrDuhpy&index=2&ab_channel=Crunch%2Celcrujido
+- title=Crunch Episodio 03 | url=https://www.youtube.com/watch?v=6N7oNg7aDwY&list=PLWuWQawMC8zDC0NJL_TsgLfuxzJrDuhpy&index=3&ab_channel=Crunch%2Celcrujido
+- title=Crunch Episodio 04 | url=https://www.youtube.com/watch?v=sU5Qo3gsf6g&list=PLWuWQawMC8zDC0NJL_TsgLfuxzJrDuhpy&index=6&ab_channel=Crunch%2Celcrujido
+- title=Crunch Opening | url=https://www.youtube.com/watch?v=6N7oNg7aDwY&list=PLWuWQawMC8zDC0NJL_TsgLfuxzJrDuhpy&index=3&ab_channel=Crunch%2Celcrujido
+
+# Si quieres títulos específicos por video, usa:
+# - title=Trailer Oficial | url=https://youtu.be/7QF7j8axtl4
+# - title=Leoric Trailer | url=https://www.youtube.com/watch?v=lS8Is7zlJC0
+
+----------------------------------------
+TIPO: 
+NOMBRE: 
+MEDIO: 
+GENERO: 
+DESCRIPCION:
+VIDEOS:
