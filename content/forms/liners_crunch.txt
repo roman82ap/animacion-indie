@@ -26,10 +26,4 @@ VIDEOS:
 # - title=Trailer Oficial | url=https://youtu.be/7QF7j8axtl4
 # - title=Leoric Trailer | url=https://www.youtube.com/watch?v=lS8Is7zlJC0
 
-----------------------------------------
-TIPO: 
-NOMBRE: 
-MEDIO: 
-GENERO: 
-DESCRIPCION:
-VIDEOS:
+
