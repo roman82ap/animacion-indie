@@ -1,297 +1,242 @@
 // scripts/ingest-forms.js
-// Lee /content/forms/*.txt y genera JSON en /content/creators/<slug>/
+// Lee /content/forms/*.txt y genera JSON en /content/creators/<creatorSlug>/*.json
 
-const fs = require("fs");
-const path = require("path");
-
-/* =========================
-   Utilidades
-========================= */
+import fs from "fs";
+import path from "path";
 
 const ROOT = process.cwd();
 const FORMS_DIR = path.join(ROOT, "content", "forms");
 const CREATORS_DIR = path.join(ROOT, "content", "creators");
 
-function ensureDir(dir) {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+function ensureDir(p) {
+  if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
 }
 
-function slugify(s) {
-  return String(s || "")
+function slugify(str) {
+  return String(str || "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 }
 
-function youtubeIdFrom(url) {
+function youtubeIdFromUrl(url) {
   if (!url) return "";
   try {
-    // normalizamos
-    if (!/^https?:\/\//i.test(url)) url = "https://" + url;
-
-    const u = new URL(url);
-    // youtu.be/<id>
-    if (u.hostname.includes("youtu.be")) {
-      return u.pathname.replace(/^\//, "");
-    }
-    // youtube.com/watch?v=<id>
-    if (u.searchParams.has("v")) {
-      return u.searchParams.get("v");
-    }
-    // embed
-    const m = u.pathname.match(/\/embed\/([^\/\?]+)/);
+    const u = new URL(url.trim().replace(/^http:/, "https:"));
+    if (u.hostname.includes("youtu.be")) return u.pathname.slice(1);
+    if (u.searchParams.get("v")) return u.searchParams.get("v");
+    // /shorts/<id>
+    const m = u.pathname.match(/\/shorts\/([^/?#]+)/);
     if (m) return m[1];
-    // fallback: lo que quede
-    return u.pathname.split("/").filter(Boolean).pop() || "";
-  } catch {
-    return "";
+  } catch {}
+  return "";
+}
+
+function parseBlock(lines, i) {
+  // parsea un bloque de “obra”
+  const data = {
+    type: "",
+    title: "",
+    medium: "",
+    genres: [],
+    description: "",
+    creator: null,
+    episodes: []
+  };
+
+  const readVal = (label) => {
+    const re = new RegExp("^\\s*" + label + "\\s*:\\s*(.*)$", "i");
+    for (; i < lines.length; i++) {
+      const m = lines[i].match(re);
+      if (m) return { val: m[1].trim(), next: i + 1 };
+      if (/^[-]{5,}$/.test(lines[i])) return { val: "", next: i }; // nuevo separador
+    }
+    return { val: "", next: i };
+  };
+
+  let r;
+
+  r = readVal("TIPO");
+  data.type = r.val || "";
+  i = r.next;
+
+  r = readVal("NOMBRE");
+  data.title = r.val || "";
+  i = r.next;
+
+  r = readVal("MEDIO");
+  // admite: 2D | 3D | Stop-motion | Híbrido
+  data.medium = (r.val || "").split("|")[0].trim();
+  i = r.next;
+
+  r = readVal("GENERO");
+  data.genres = (r.val || "")
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean);
+  i = r.next;
+
+  r = readVal("DESCRIPCION");
+  data.description = r.val || "";
+  i = r.next;
+
+  // VIDEOS: varias líneas tipo:
+  // - title=Algo | url=https://youtu...
+  // - https://youtu...
+  let started = false;
+  for (; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (/^[-]{5,}$/.test(line)) break; // siguiente bloque
+    if (/^VIDEOS\s*:/.test(line)) { started = true; continue; }
+    if (!started) continue;
+    if (!line.startsWith("-")) continue;
+
+    let title = "";
+    let url = "";
+
+    // con metadatos
+    if (/title\s*=/.test(line) && /url\s*=/.test(line)) {
+      const t = line.match(/title\s*=\s*([^|]+)/i);
+      const u = line.match(/url\s*=\s*(.+)$/i);
+      title = t ? t[1].trim() : "";
+      url = u ? u[1].trim() : "";
+    } else {
+      // solo URL
+      url = line.slice(1).trim();
+    }
+
+    const id = youtubeIdFromUrl(url);
+    if (id) {
+      data.episodes.push({
+        id: slugify(title || id),
+        title: title || data.title || "Video",
+        youtubeId: id
+      });
+    }
   }
-}
 
-function labelFromUrl(u) {
-  try {
-    if (!/^https?:\/\//.test(u)) u = "https://" + u;
-    const host = new URL(u).hostname.replace(/^www\./, "");
-    if (host.includes("youtube")) return "YouTube";
-    if (host.includes("instagram")) return "Instagram";
-    if (host.includes("twitter")) return "Twitter/X";
-    if (host.includes("patreon")) return "Patreon";
-    if (host.includes("ko-fi")) return "Ko-fi";
-    return host;
-  } catch {
-    return "Link";
-  }
+  return { item: data, next: i };
 }
-
-function readTxtFiles(dir) {
-  if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter((f) => f.endsWith(".txt"));
-}
-
-/* =========================
-   Parser del .txt
-   Formato esperado (flexible):
-   TIENE CREADOR: si|no
-   CREADOR: veridion23 (slug)
-   REDES:
-   - https://...
-   - https://...
-   FINANCIACION:
-   - https://...
-   --------------------------------
-   TIPO: Serie|Corto|Película|Trailer|Huerfano
-   NOMBRE: Fuerza abusiva
-   MEDIO: 2D|3D|Stop-motion|Híbrido
-   GENERO: Acción, Sci-Fi
-   DESCRIPCION: texto
-   VIDEOS:
-   - title=Trailer Oficial | url=https://youtu...
-   - url=https://youtu...           (title opcional)
-========================= */
 
 function parseForm(txt) {
-  const lines = txt.split(/\r?\n/).map((l) => l.trim());
-
-  let creatorFlag = "si";
+  const lines = txt.split(/\r?\n/);
   let creatorSlug = "";
-  let creatorName = ""; // si quieres usar un nombre distinto al slug
+  let creatorName = "";
+  let hasCreator = false;
   const socials = [];
   const support = [];
 
-  const works = [];
-  let current = null;
-  let mode = ""; // "", "REDES", "FIN", "VIDEOS"
-
-  const flushWork = () => {
-    if (!current) return;
-    // default/limpieza
-    current.slug = current.slug || slugify(current.title || "obra");
-    current.type = current.type || "Huerfano";
-    current.medium = current.medium || "";
-    current.genres = current.genres || [];
-    current.description = current.description || "";
-    current.episodes = current.episodes || [];
-    works.push(current);
-    current = null;
+  const urlLines = (startIndex) => {
+    const arr = [];
+    for (let j = startIndex; j < lines.length; j++) {
+      const l = lines[j].trim();
+      if (/^-\s*https?:\/\//i.test(l)) arr.push(l.replace(/^-+/, "").trim());
+      else if (l === "" || /^[A-ZÁÉÍÓÚÑ]+:/.test(l)) break;
+    }
+    return arr;
   };
 
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (!line) continue;
+  // encabezado
+  for (let i = 0; i < lines.length; i++) {
+    const L = lines[i];
 
-    if (/^ti[eé]ne\s+creador\s*:/i.test(line)) {
-      creatorFlag = line.split(":")[1]?.trim().toLowerCase() || "si";
-      continue;
-    }
-    if (/^creador\s*:/i.test(line)) {
-      const val = line.split(":")[1]?.trim() || "";
-      // Puedes permitir "slug | Nombre bonito"
-      const [slug, name] = val.split("|").map((s) => s && s.trim());
-      creatorSlug = slug || "";
-      creatorName = name || slug || "";
-      continue;
-    }
-    if (/^redes\s*:/i.test(line)) {
-      mode = "REDES";
-      continue;
-    }
-    if (/^financiaci[oó]n\s*:/i.test(line)) {
-      mode = "FIN";
-      continue;
-    }
-    if (/^-{3,}/.test(line)) {
-      // separador de obra
-      flushWork();
-      mode = "";
+    const mHas = L.match(/^\s*TIENE\s+CREADOR\s*:\s*(.+)$/i);
+    if (mHas) { hasCreator = /si/i.test(mHas[1]); continue; }
+
+    const mC = L.match(/^\s*CREADOR\s*:\s*(.+)$/i);
+    if (mC) {
+      creatorName = mC[1].trim();
+      creatorSlug = slugify(creatorName || "sin-creador");
       continue;
     }
 
-    // bloques por obra
-    if (/^tipo\s*:/i.test(line)) {
-      if (current) flushWork();
-      current = {};
-      current.type = line.split(":")[1]?.trim() || "";
+    if (/^\s*REDES\s*:/i.test(L)) {
+      for (const u of urlLines(i + 1)) socials.push({ label: new URL(u).hostname, href: u });
       continue;
     }
-    if (/^nombre\s*:/i.test(line)) {
-      if (!current) current = {};
-      current.title = line.split(":")[1]?.trim() || "";
-      current.slug = slugify(current.title);
-      continue;
-    }
-    if (/^medio\s*:/i.test(line)) {
-      if (!current) current = {};
-      current.medium = line.split(":")[1]?.trim() || "";
-      continue;
-    }
-    if (/^genero\s*:/i.test(line) || /^género\s*:/i.test(line)) {
-      if (!current) current = {};
-      const c = line.split(":")[1] || "";
-      current.genres = c.split(",").map((g) => g.trim()).filter(Boolean);
-      continue;
-    }
-    if (/^descripcion\s*:/i.test(line) || /^descripción\s*:/i.test(line)) {
-      if (!current) current = {};
-      current.description = line.split(":")[1]?.trim() || "";
-      continue;
-    }
-    if (/^videos\s*:/i.test(line)) {
-      if (!current) current = {};
-      current.episodes = [];
-      mode = "VIDEOS";
-      continue;
-    }
-
-    // listas con "- " según modo
-    if (/^- /.test(line)) {
-      const item = line.replace(/^- +/, "");
-      if (mode === "REDES") {
-        socials.push({ label: labelFromUrl(item), href: item });
-        continue;
+    if (/^\s*FINANCIACION\s*:/i.test(L)) {
+      for (const u of urlLines(i + 1)) {
+        let label = "Apóyame";
+        try {
+          const host = new URL(u).hostname;
+          if (/patreon/i.test(host)) label = "Patreon";
+          else if (/ko-fi/i.test(host)) label = "Ko-fi";
+        } catch {}
+        support.push({ label, href: u });
       }
-      if (mode === "FIN") {
-        support.push({ label: labelFromUrl(item), href: item });
-        continue;
-      }
-      if (mode === "VIDEOS") {
-        const obj = { title: "", youtubeId: "" };
-        // admite "title=.. | url=..", "url=..", o solo URL
-        const parts = item.split("|").map((p) => p.trim());
-        for (const p of parts) {
-          const [k, v] = p.split("=").map((x) => x && x.trim());
-          if (!v) {
-            // no venía como k=v → asumimos que es la URL
-            obj.youtubeId = youtubeIdFrom(p);
-          } else {
-            if (k.toLowerCase() === "title" || k.toLowerCase() === "titulo") {
-              obj.title = v;
-            } else if (k.toLowerCase() === "url") {
-              obj.youtubeId = youtubeIdFrom(v);
-            }
-          }
-        }
-        // último intento: si no hay youtubeId, toda la línea puede ser la URL
-        if (!obj.youtubeId) obj.youtubeId = youtubeIdFrom(item);
-        if (!obj.title) obj.title = "Video";
-        obj.id = slugify(obj.title);
-        if (obj.youtubeId) current.episodes.push(obj);
-        continue;
-      }
+      continue;
     }
   }
 
-  flushWork();
+  // obras (bloques separados por líneas de guiones)
+  const items = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (/^[-]{5,}$/.test(lines[i])) {
+      const { item, next } = parseBlock(lines, i + 1);
+      if (item.title && item.type && item.episodes.length) {
+        if (hasCreator) item.creator = creatorSlug;
+        items.push(item);
+      }
+      i = next - 1;
+    }
+  }
 
-  // salida
   return {
-    creatorFlag,
-    creatorSlug: creatorSlug || (works[0] ? "orphan" : ""),
-    creatorName: creatorName || creatorSlug || "",
-    socials,
-    support,
-    works
+    creator: hasCreator ? { slug: creatorSlug, name: creatorName, socials, support } : null,
+    items
   };
 }
 
-/* =========================
-   Ingesta
-========================= */
+function writeJSONCreator(baseDir, creator) {
+  ensureDir(baseDir);
+  const file = path.join(baseDir, "creator.json");
+  fs.writeFileSync(file, JSON.stringify(creator, null, 2), "utf8");
+}
+
+function writeJSONWork(baseDir, item) {
+  const slug = slugify(item.title);
+  const file = path.join(baseDir, `${slug}.json`);
+  const payload = {
+    slug,
+    title: item.title,
+    type: item.type,
+    medium: item.medium,
+    genres: item.genres || [],
+    description: item.description || "",
+    episodes: item.episodes || [],
+    creator: item.creator || null
+  };
+  fs.writeFileSync(file, JSON.stringify(payload, null, 2), "utf8");
+}
 
 function main() {
   ensureDir(CREATORS_DIR);
-
-  const files = readTxtFiles(FORMS_DIR);
-  if (files.length === 0) {
-    console.log("[ingest-forms] No hay .txt en /content/forms. Nada que hacer.");
+  if (!fs.existsSync(FORMS_DIR)) {
+    console.log("[ingest] No hay /content/forms; nada que hacer.");
     return;
   }
 
-  for (const file of files) {
-    const fp = path.join(FORMS_DIR, file);
-    const txt = fs.readFileSync(fp, "utf8");
-    const data = parseForm(txt);
+  const forms = fs.readdirSync(FORMS_DIR).filter(f => f.endsWith(".txt"));
+  for (const f of forms) {
+    const raw = fs.readFileSync(path.join(FORMS_DIR, f), "utf8");
+    const parsed = parseForm(raw);
 
-    const creatorSlug = data.creatorSlug || "orphans";
-    const baseDir = path.join(CREATORS_DIR, creatorSlug);
-    ensureDir(baseDir);
-
-    // Opcional: crear/actualizar creator.json si TIENE CREADOR: si
-    if (data.creatorFlag !== "no") {
-      const creatorJsonPath = path.join(baseDir, "creator.json");
-      const creatorObj = {
-        slug: creatorSlug,
-        name: data.creatorName || creatorSlug,
-        socials: data.socials || [],
-        support: data.support || [],
-        avatar: `/creators/${creatorSlug}/avatar.png`
-      };
-      fs.writeFileSync(creatorJsonPath, JSON.stringify(creatorObj, null, 2));
-      console.log(` [creator] ${creatorSlug} -> creator.json`);
-    }
-
-    // Por cada obra, generar <slug>.json
-    for (const w of data.works) {
-      const out = {
-        slug: w.slug,
-        title: w.title,
-        type: w.type,
-        medium: w.medium,
-        genres: w.genres,
-        description: w.description,
-        banner: w.banner || "", // si en el futuro lo quieres llenar
-        support: data.support || [],
-        episodes: w.episodes || []
-      };
-
-      const outPath = path.join(baseDir, `${out.slug}.json`);
-      fs.writeFileSync(outPath, JSON.stringify(out, null, 2));
-      console.log(` [work]  ${creatorSlug}/${out.slug}.json (${out.episodes.length} videos)`);
+    // con creador
+    if (parsed.creator) {
+      const cDir = path.join(CREATORS_DIR, parsed.creator.slug);
+      ensureDir(cDir);
+      writeJSONCreator(cDir, parsed.creator);
+      for (const it of parsed.items) writeJSONWork(cDir, it);
+      console.log(`[ingest] ${f} -> ${parsed.items.length} obras para creador ${parsed.creator.slug}`);
+    } else {
+      // huérfanas: /content/orphans
+      const oDir = path.join(ROOT, "content", "orphans");
+      ensureDir(oDir);
+      for (const it of parsed.items) writeJSONWork(oDir, it);
+      console.log(`[ingest] ${f} -> ${parsed.items.length} obras huérfanas`);
     }
   }
-
-  console.log("✔ Ingesta de formularios completada.\n");
 }
 
 main();
