@@ -5,10 +5,7 @@ import FilterPills from "../components/FilterPills";
 
 export default function TypePage({ works, type }) {
   const router = useRouter();
-
-  if (router.isFallback) {
-    return <div>Cargando...</div>;
-  }
+  if (router.isFallback) return <div>Cargando...</div>;
 
   return (
     <Layout>
@@ -21,16 +18,9 @@ export default function TypePage({ works, type }) {
   );
 }
 
-// Helper reutilizable
+// helper reutilizable
 export async function getStaticPropsForType(typeKey, typeLabel) {
-  const { getAllWorks } = await import("../lib/server/content.js");
-  const all = await getAllWorks();
-
-  const works = all.filter(
-    (w) => String(w.type || w.tipo).toLowerCase() === typeKey.toLowerCase()
-  );
-
-  return {
-    props: { works, type: typeLabel },
-  };
+  const { getWorksByType } = await import("../lib/content");
+  const works = getWorksByType(typeKey);
+  return { props: { works, type: typeLabel } };
 }
