@@ -1,66 +1,52 @@
 // pages/_type-page.js
-// Plantilla genérica de páginas por tipo
+// Plantilla genérica para listar obras por tipo (Series, Cortos, Películas, Trailers)
 
 import React from "react";
+import ContentGrid from "@/components/ContentGrid";
+import FilterPills from "@/components/FilterPills";
 
-// Tarjetas simples
-function Thumb({ item }) {
-  const first = item.episodes && item.episodes[0];
-  const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-  const thumb = first?.youtubeId ? ytThumb(first.youtubeId) : "/Logo.png";
-
-  const href = `/obra/${item.slug}`; // ajusta si tu [slug].js espera otro slug
-
+// UI de la página de tipo
+export default function TypePage({ title, items, tags }) {
   return (
-    <a
-      href={href}
-      className="block rounded-xl overflow-hidden bg-neutral-900/60 ring-1 ring-white/10 hover:ring-fuchsia-500 transition"
-    >
-      <div className="aspect-video bg-neutral-800">
-        <img src={thumb} alt={item.title} className="w-full h-full object-cover" />
-      </div>
-      <div className="p-3">
-        <h3 className="text-sm font-semibold text-white">{item.title}</h3>
-        <p className="text-xs text-neutral-400">
-          {(item.genres || []).join(" • ")}
-        </p>
-      </div>
-    </a>
-  );
-}
-
-function ContentGrid({ title, items }) {
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
-      <h1 className="text-2xl font-bold mb-4">{title}</h1>
-      {items.length === 0 ? (
-        <p className="text-neutral-400">Pronto…</p>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {items.map((it) => (
-            <Thumb key={it.slug} item={it} />
-          ))}
-        </div>
-      )}
+    <div className="space-y-6">
+      <FilterPills
+        title={title}
+        tags={tags || []}
+        onChange={() => {}}
+      />
+      <ContentGrid title={title} items={items} />
     </div>
   );
 }
 
-export default function TypePage(props) {
-  return <ContentGrid title={props.pageTitle} items={props.items} />;
-}
+/**
+ * getStaticPropsForType:
+ * NO importes nada de lib/server en el top-level.
+ * Haz import dinámico aquí adentro para que solo se ejecute en build/servidor.
+ */
+export async function getStaticPropsForType(typeSingular, titlePlural) {
+  // 👇 Import dinámico (solo servidor)
+  const server = await import("@/lib/server/content");
+  const { getAllWorks } = server;
 
-// helper usado por cada página de tipo (series, películas, etc.)
-export async function getStaticPropsForType(typeSingular, pageTitle) {
-  // IMPORTANTE: import dinámico -> esto se ejecuta SOLO en build/servidor
-  const server = await import("../lib/server/content.js");
-  const all = server.getAllByType(typeSingular);
-  const items = [...all].sort((a, b) => a.title.localeCompare(b.title));
+  const all = await getAllWorks();
+
+  const items = (all || [])
+    .filter((x) => (x.type || "").toLowerCase() === typeSingular.toLowerCase())
+    .sort((a, b) => a.title.localeCompare(b.title));
+
+  // Tags/etiquetas (géneros) agregadas automáticamente
+  const tagSet = new Set();
+  for (const w of items) {
+    (w.genres || []).forEach((g) => tagSet.add(g));
+  }
+
   return {
     props: {
-      pageTitle,
+      title: titlePlural,
       items,
+      tags: Array.from(tagSet),
     },
-    revalidate: 60, // ISR opcional
+    revalidate: 60, // ISR
   };
 }
