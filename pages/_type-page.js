@@ -1,3 +1,4 @@
+// pages/_type-page.js
 import { useRouter } from "next/router";
 import Layout from "../components/Layout";
 import ContentGrid from "../components/ContentGrid";
@@ -18,9 +19,8 @@ export default function TypePage({ works, type }) {
   );
 }
 
-// helper reutilizable
 export async function getStaticPropsForType(typeKey, typeLabel) {
-  const { getWorksByType } = await import("../lib/content");
+  const { getWorksByType } = await import("../lib/content"); // sin fs
   const works = getWorksByType(typeKey);
   return { props: { works, type: typeLabel } };
 }
