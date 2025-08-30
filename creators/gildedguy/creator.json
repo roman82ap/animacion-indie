@@ -1,0 +1,13 @@
+{
+  "slug": "gildedguy",
+  "name": "Gildedguy",
+  "socials": [
+    { "label": "YouTube", "href": "https://www.youtube.com/@gildedguy/featured" },
+    { "label": "Website", "href": "https://www.gildedguy.com" },
+    { "label": "Instagram", "href": "https://www.instagram.com/gildedguyart" }
+  ],
+  "support": [
+    { "label": "Patreon", "href": "https://www.patreon.com/gildedguy" }
+  ],
+  "avatar": "/creators/gildedguy/avatar.png"
+}
