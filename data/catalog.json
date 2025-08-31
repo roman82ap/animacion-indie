@@ -33,17 +33,12 @@
       "tipo": "serie",
       "media": "2D",
       "genres": ["Acción", "Comedia", "Aventura"],
-      "description": "A grey stickman tries to paint a golden future. Un stickman gris intenta pintar un futuro dorado.",
+      "description": "Un stickman gris intenta pintar un futuro dorado.",
       "episodes": [
-        { "title": "GILDEDGUY STORY #0 - Gildedguy Gets Up", "youtubeId": "X7Arrfu9l30" },
-        { "title": "GILDEDGUY STORY #1 - Gildedguy vs Fry", "youtubeId": "KFqsbjX8aLs" },
-        { "title": "GILDEDGUY STORY #2 - Gildedguy vs Jade", "youtubeId": "AQrfhjahsTQ" },
-        { "title": "GILDEDGUY STORY #3 - Basement Busk", "youtubeId": "IMcVQo1CRNA" },
-        { "title": "GILDEDGUY STORY #4 - Gildedguy vs Bog", "youtubeId": "CQL-ixTcqWU" },
-        { "title": "GILDEDGUY STORY #5 - Gildedguy & the Green-Eyed Cowboy", "youtubeId": "eOMUnZ16bMk" },
-        { "title": "GILDEDGUY STORY #6 - Gildedguy vs Oxob", "youtubeId": "yjOmkJHZxbk" },
-        { "title": "GILDEDGUY STORY #7 - Gildedguy & the Rock Hard Gladiator", "youtubeId": "JUqTlqjBJTA" },
-        { "title": "GILDEDGUY STORY #8 - Gildedguy & the Dragon of Mar", "youtubeId": "1156Dq6TaHg" }
+        { "title": "Story #0 - Gets Up", "youtubeId": "X7Arrfu9l30" },
+        { "title": "Story #1 - vs Fry", "youtubeId": "KFqsbjX8aLs" },
+        { "title": "Story #2 - vs Jade", "youtubeId": "AQrfhjahsTQ" },
+        { "title": "Story #3 - Basement Busk", "youtubeId": "IMcVQo1CRNA" }
       ]
     }
   ]
