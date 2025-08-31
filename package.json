@@ -2,10 +2,11 @@
   "name": "animacion-indie",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
     "prebuild": "node scripts/ingest-forms.js",
     "build": "next build",
+    "dev": "next dev",
     "start": "next start"
   },
   "dependencies": {
