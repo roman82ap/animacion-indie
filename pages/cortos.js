@@ -1,10 +1,9 @@
-// pages/cortos.js
-import TypePage, { getStaticPropsForType } from './_type-page';
+import TypePage from "./_type-page";
 
-export default function Page(props) {
-  return <TypePage {...props} />;
-}
+export default function Page(props) { return <TypePage {...props} />; }
 
 export async function getStaticProps() {
-  return getStaticPropsForType('Cortos', 'corto');
+  const { getWorksByType } = await import("../lib/server/content.js");
+  const works = getWorksByType("corto");
+  return { props: { works, type: "cortos" }, revalidate: 60 };
 }
