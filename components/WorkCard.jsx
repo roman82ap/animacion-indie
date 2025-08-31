@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
+const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+
 export default function WorkCard({ item }) {
-  const thumb =
-    (item.episodes && item.episodes[0]?.youtubeId)
-      ? `https://i.ytimg.com/vi/${item.episodes[0].youtubeId}/hqdefault.jpg`
-      : '/Logo.png';
+  const first = item?.episodes?.[0];
+  const thumb = first?.youtubeId ? ytThumb(first.youtubeId) : (item.thumb || '/Logo.png');
 
   return (
     <Link href={`/obra/${item.slug}`} className="block group">
@@ -18,7 +18,7 @@ export default function WorkCard({ item }) {
             {item.title}
           </div>
           <div className="text-xs text-neutral-400 mt-1">
-            {item.medium} • {Array.isArray(item.genres) ? item.genres.join(', ') : item.genres}
+            {item.medium} {item.genres?.length ? `• ${Array.isArray(item.genres) ? item.genres.join(', ') : item.genres}` : ''}
           </div>
         </div>
       </div>
