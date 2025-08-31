@@ -7,7 +7,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
           <Image
-            src="/Logo.png" /* ya lo tienes en /public */
+            src="/Logo.png"
             width={36}
             height={36}
             alt="Veridion23"
