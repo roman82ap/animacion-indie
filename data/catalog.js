@@ -3,38 +3,47 @@
     {
       "slug": "fuerza-abusiva",
       "title": "Fuerza Abusiva",
-      "type": "Trailer",
-      "medium": "3D",
-      "genres": ["Acción", "Comedia", "Sci-Fi", "Aventura"],
-      "description": "Un grupo elite se encarga de eliminar la amenaza.",
+      "tipo": "trailer",
+      "media": "3D",
+      "genres": ["Acción", "Parodia"],
+      "thumb": "/banner/FA-Banner-0001.png",
       "episodes": [
-        { "id": "trailer-oficial", "title": "Trailer Oficial", "youtubeId": "7QF7j8axtl4" },
-        { "id": "trailer-leoric",  "title": "Leoric Trailer",  "youtubeId": "lS8Is7zlJC0" }
+        { "title": "Trailer Oficial", "youtubeId": "7QF7j8axtl4" },
+        { "title": "Leoric Trailer", "youtubeId": "lS8Is7zlJC0" }
+      ]
+    },
+    {
+      "slug": "el-crujido",
+      "title": "CRUNCH | El Crujido",
+      "tipo": "serie",
+      "media": "2D",
+      "genres": ["Acción", "Drama"],
+      "thumb": "/banner/Crujido-Banner-001.png",
+      "episodes": [
+        { "title": "Capítulo 1", "youtubeId": "8pr352T1Ae4" }
       ]
     },
     {
       "slug": "holgazanes-y-demonios",
       "title": "Holgazanes y Demonios",
-      "type": "Serie",
-      "medium": "2D",
-      "genres": ["Acción", "Comedia", "Aventura", "Fantasía"],
-      "description": "Un grupo de holgazanes es transportado a un mundo de fantasía y debe encontrar cómo volver.",
+      "tipo": "serie",
+      "media": "Stop-motion",
+      "genres": ["Terror", "Suspenso"],
+      "thumb": "/banner/HyD-Banner-001.png",
       "episodes": [
-        { "id": "ep1", "title": "H&D episodio 1", "youtubeId": "Jro1TkqpEXg" }
+        { "title": "Ep. 1", "youtubeId": "kX0kYhFbrY4" }
       ]
     },
     {
-      "slug": "crunch",
-      "title": "Crunch",
-      "type": "Serie",
-      "medium": "2D",
-      "genres": ["Acción", "Comedia"],
-      "description": "Una serie animada completamente desde un celular.",
+      "slug": "gildedguy",
+      "title": "Gildedguy",
+      "tipo": "serie",
+      "media": "2D",
+      "genres": ["Acción", "Comedia", "Aventura"],
+      "thumb": "/banner/ORIGIN-Thumb.png",
       "episodes": [
-        { "id": "ep-01", "title": "Crunch Episodio 01", "youtubeId": "8pr352T1Ae4" },
-        { "id": "ep-02", "title": "Crunch Episodio 02", "youtubeId": "iK8kY6CWRp4" },
-        { "id": "ep-03", "title": "Crunch Episodio 03", "youtubeId": "6N7oNg7aDwY" },
-        { "id": "ep-04", "title": "Crunch Episodio 04", "youtubeId": "sU5Qo3gsf6g" }
+        { "title": "GILDEDGUY STORY #0 - Gildedguy Gets Up", "youtubeId": "X7Arrfu9l30" },
+        { "title": "GILDEDGUY STORY #1 - Gildedguy vs Fry", "youtubeId": "KFqsbjX8aLs" }
       ]
     }
   ]
