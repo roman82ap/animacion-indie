@@ -1,26 +1,49 @@
-// pages/_type-page.js
-import { useRouter } from "next/router";
-import Layout from "../components/Layout";
-import ContentGrid from "../components/ContentGrid";
-import FilterPills from "../components/FilterPills";
+import Layout from '../components/Layout';
+import ContentGrid from '../components/ContentGrid';
 
-export default function TypePage({ works, type }) {
-  const router = useRouter();
-  if (router.isFallback) return <div>Cargando...</div>;
+// mapeo robusto por si el JSON trae "Película" con tilde, etc.
+const CANON = {
+  serie: 'Serie',
+  series: 'Serie',
+  'serie(s)': 'Serie',
+  corto: 'Corto',
+  cortos: 'Corto',
+  pelicula: 'Película',
+  películas: 'Película',
+  peliculaS: 'Película',
+  película: 'Película',
+  trailer: 'Trailer',
+  trailers: 'Trailer',
+};
 
+function canonType(input) {
+  if (!input) return null;
+  const k = String(input).toLowerCase();
+  return CANON[k] || input; // devuelve original si no matchea
+}
+
+export default function TypePage({ title, items }) {
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold mb-6 capitalize">{type}</h1>
-        <FilterPills />
-        <ContentGrid works={works} />
-      </div>
+      <ContentGrid title={title} items={items} />
     </Layout>
   );
 }
 
-export async function getStaticPropsForType(typeKey, typeLabel) {
-  const { getWorksByType } = await import("../lib/content"); // sin fs
-  const works = getWorksByType(typeKey);
-  return { props: { works, type: typeLabel } };
+export async function getStaticPropsForType(typeLabel, pageTitle) {
+  const { getAllWorks } = await import('../lib/server/content');
+  const all = await getAllWorks();
+
+  const wanted = canonType(typeLabel);
+  const items = all
+    .filter((w) => canonType(w.type) === wanted)
+    .sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+
+  return {
+    props: {
+      title: pageTitle || typeLabel,
+      items,
+    },
+    revalidate: 60, // ISR
+  };
 }
