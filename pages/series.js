@@ -1,4 +1,4 @@
-// /pages/series.js
+// pages/series.js
 import TypePage, { getStaticPropsForType } from './_type-page';
 
 export default function Page(props) {
@@ -6,5 +6,5 @@ export default function Page(props) {
 }
 
 export async function getStaticProps() {
-  return getStaticPropsForType('Serie', 'Series');
+  return getStaticPropsForType('Series', 'serie');
 }
