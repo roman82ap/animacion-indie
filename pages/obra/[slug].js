@@ -1,116 +1,92 @@
-import Layout from '../../components/Layout';
+// pages/obra/[slug].js
+import Layout from '@/components/Layout';
+import { getAllWorks, getWorkBySlug, getRelated } from '@/lib/server/content';
 
-const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+function YouTubeEmbed({ id }) {
+  return (
+    <div className="aspect-video w-full rounded-xl overflow-hidden ring-1 ring-white/10">
+      <iframe
+        className="w-full h-full"
+        src={`https://www.youtube.com/embed/${id}`}
+        title="YouTube video player"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+      />
+    </div>
+  );
+}
 
-export default function WorkPage({ work }) {
-  if (!work) {
-    return (
-      <Layout>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          No encontrado.
-        </div>
-      </Layout>
-    );
-  }
+export default function WorkPage({ work, related }) {
+  if (!work) return <Layout><div className="max-w-6xl mx-auto p-6">No encontrado</div></Layout>;
 
-  const first = work.episodes?.[0];
-  const banner =
-    work.banner || (first?.youtubeId ? ytThumb(first.youtubeId) : '/Logo.png');
+  const hasEpisodes = Array.isArray(work.episodes) && work.episodes.length > 0;
+  const firstId = hasEpisodes ? work.episodes[0].youtubeId : null;
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-        {/* HERO */}
-        <div className="rounded-2xl overflow-hidden ring-1 ring-neutral-800/60 bg-neutral-950">
-          <div className="relative aspect-[21/9] sm:aspect-[16/6] bg-neutral-900">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
+          <div>
             <img
-              src={banner}
+              src={work.thumb || '/Logo.png'}
               alt={work.title}
-              className="w-full h-full object-cover opacity-80"
+              className="w-full rounded-xl ring-1 ring-white/10 mb-4"
+              style={{ display: firstId ? 'none' : 'block' }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-            <div className="absolute left-6 right-6 bottom-6">
-              <div className="text-2xl sm:text-3xl font-bold text-white">{work.title}</div>
-              <div className="mt-1 text-sm text-neutral-300">
-                {work.type} • {work.medium}
-                {work.genres?.length ? ` • ${Array.isArray(work.genres) ? work.genres.join(', ') : work.genres}` : ''}
-              </div>
-            </div>
-          </div>
-        </div>
+            {firstId && <YouTubeEmbed id={firstId} />}
 
-        {/* BODY */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-          {/* Info principal */}
-          <div className="lg:col-span-2">
-            {work.description && (
-              <p className="text-neutral-300 leading-relaxed mb-4">{work.description}</p>
-            )}
+            <h1 className="text-3xl font-bold mt-6">{work.title}</h1>
+            <p className="mt-2 text-neutral-300">
+              {work.media ? `${work.media} • ` : ''}{(work.genres || []).join(', ')}
+            </p>
+            {work.description && <p className="mt-4">{work.description}</p>}
 
-            {/* Episodios (para Series) */}
-            {Array.isArray(work.episodes) && work.episodes.length > 0 && (
+            {hasEpisodes && (
               <>
-                <h2 className="text-white font-semibold mb-3">Episodios</h2>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {work.episodes.map((ep, idx) => (
-                    <a
-                      key={ep.youtubeId || idx}
-                      href={`https://www.youtube.com/watch?v=${ep.youtubeId}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block rounded-xl overflow-hidden ring-1 ring-neutral-800/70 hover:ring-fuchsia-500/40 transition bg-neutral-900"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={ytThumb(ep.youtubeId)}
-                        alt={ep.title || work.title}
-                        className="aspect-video w-full object-cover"
-                      />
-                      <div className="p-3">
-                        <div className="text-neutral-200 font-medium line-clamp-1">
-                          {ep.title || `Episodio ${idx + 1}`}
-                        </div>
-                        <div className="text-xs text-neutral-400 mt-1">YouTube</div>
-                      </div>
-                    </a>
+                <h2 className="text-xl font-semibold mt-8 mb-3">Episodios</h2>
+                <ul className="space-y-3">
+                  {work.episodes.map((ep, i) => (
+                    <li key={ep.youtubeId} className="flex items-center gap-3">
+                      <span className="text-sm opacity-70 w-6">{i + 1}.</span>
+                      <a
+                        className="underline hover:text-fuchsia-400"
+                        href={`https://youtu.be/${ep.youtubeId}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {ep.title}
+                      </a>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </>
             )}
           </div>
 
-          {/* Sidebar */}
-          <aside className="lg:col-span-1">
-            <div className="rounded-2xl ring-1 ring-neutral-800/70 bg-neutral-950 p-4">
-              <div className="text-white font-semibold mb-2">Acerca de</div>
-              <ul className="text-sm text-neutral-300 space-y-1">
-                <li><b>Tipo:</b> {work.type}</li>
-                <li><b>Medio:</b> {work.medium}</li>
-                {work.genres?.length ? (
-                  <li><b>Géneros:</b> {Array.isArray(work.genres) ? work.genres.join(', ') : work.genres}</li>
-                ) : null}
-              </ul>
-
-              {(work.support && work.support.length > 0) && (
-                <>
-                  <div className="text-white font-semibold mt-4 mb-2">Apóyalo</div>
-                  <div className="flex flex-col gap-2">
-                    {work.support.map((s, i) => (
-                      <a
-                        key={i}
-                        href={s.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center justify-center rounded-lg px-3 py-2 bg-fuchsia-600 hover:bg-fuchsia-500 text-white text-sm"
-                      >
-                        {s.label}
-                      </a>
-                    ))}
+          <aside>
+            <h3 className="text-lg font-semibold mb-3">Relacionados</h3>
+            <div className="grid gap-4">
+              {related.map(r => (
+                <a
+                  key={r.slug}
+                  href={`/obra/${r.slug}`}
+                  className="flex items-center gap-3 rounded-lg ring-1 ring-white/10 hover:ring-fuchsia-500 transition p-2"
+                >
+                  <img
+                    src={r.thumb || '/Logo.png'}
+                    alt={r.title}
+                    className="w-24 h-16 object-cover rounded-md"
+                    loading="lazy"
+                  />
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{r.title}</p>
+                    <p className="text-xs opacity-70 truncate">
+                      {r.media ? `${r.media} • ` : ''}{(r.genres || []).join(', ')}
+                    </p>
                   </div>
-                </>
-              )}
+                </a>
+              ))}
             </div>
           </aside>
         </div>
@@ -119,21 +95,16 @@ export default function WorkPage({ work }) {
   );
 }
 
-/* ======= DATA SSG ======= */
 export async function getStaticPaths() {
-  const { getAllWorks } = await import('../../lib/server/content');
-  const all = await getAllWorks();
-  const paths = all.map((w) => ({ params: { slug: w.slug } }));
-  return { paths, fallback: false };
+  const works = getAllWorks();
+  return {
+    paths: works.map(w => ({ params: { slug: w.slug } })),
+    fallback: false
+  };
 }
 
 export async function getStaticProps({ params }) {
-  const { getAllWorks } = await import('../../lib/server/content');
-  const all = await getAllWorks();
-  const work = all.find((w) => w.slug === params.slug) || null;
-
-  return {
-    props: { work },
-    revalidate: 60,
-  };
+  const work = getWorkBySlug(params.slug);
+  const related = getRelated(params.slug, 6);
+  return { props: { work: work || null, related }, revalidate: 60 };
 }
