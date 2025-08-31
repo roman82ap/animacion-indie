@@ -3,6 +3,7 @@ import Layout from '@/components/Layout';
 import { getAllWorks, getWorkBySlug, getRelated } from '@/lib/server/content';
 
 function YouTubeEmbed({ id }) {
+  if (!id) return null;
   return (
     <div className="aspect-video w-full rounded-xl overflow-hidden ring-1 ring-white/10">
       <iframe
@@ -24,21 +25,23 @@ export default function WorkPage({ work, related }) {
   const firstId = hasEpisodes ? work.episodes[0].youtubeId : null;
 
   return (
-    <Layout>
+    <Layout title={work.title}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
           <div>
-            <img
-              src={work.thumb || '/Logo.png'}
-              alt={work.title}
-              className="w-full rounded-xl ring-1 ring-white/10 mb-4"
-              style={{ display: firstId ? 'none' : 'block' }}
-            />
-            {firstId && <YouTubeEmbed id={firstId} />}
+            {!firstId && (
+              <img
+                src={work.thumb || '/Logo.png'}
+                alt={work.title}
+                className="w-full rounded-xl ring-1 ring-white/10 mb-4"
+              />
+            )}
+
+            <YouTubeEmbed id={firstId} />
 
             <h1 className="text-3xl font-bold mt-6">{work.title}</h1>
             <p className="mt-2 text-neutral-300">
-              {work.media ? `${work.media} • ` : ''}{(work.genres || []).join(', ')}
+              {(work.media || work.medium) ? `${work.media || work.medium} • ` : ''}{(work.genres || []).join(', ')}
             </p>
             {work.description && <p className="mt-4">{work.description}</p>}
 
@@ -82,7 +85,7 @@ export default function WorkPage({ work, related }) {
                   <div className="min-w-0">
                     <p className="font-medium truncate">{r.title}</p>
                     <p className="text-xs opacity-70 truncate">
-                      {r.media ? `${r.media} • ` : ''}{(r.genres || []).join(', ')}
+                      {(r.media || r.medium) ? `${r.media || r.medium} • ` : ''}{(r.genres || []).join(', ')}
                     </p>
                   </div>
                 </a>
