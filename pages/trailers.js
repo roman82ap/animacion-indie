@@ -1,10 +1,9 @@
-// pages/trailers.js
-import TypePage, { getStaticPropsForType } from './_type-page';
+import TypePage from "./_type-page";
 
-export default function Page(props) {
-  return <TypePage {...props} />;
-}
+export default function Page(props) { return <TypePage {...props} />; }
 
 export async function getStaticProps() {
-  return getStaticPropsForType('Trailers', 'trailer');
+  const { getWorksByType } = await import("../lib/server/content.js");
+  const works = getWorksByType("trailer");
+  return { props: { works, type: "trailers" }, revalidate: 60 };
 }
