@@ -1,6 +1,6 @@
 // pages/obra/[slug].js
-import Layout from '@/components/Layout';
-import { getAllWorks, getWorkBySlug, getRelated } from '@/lib/server/content';
+import Layout from "../../components/Layout";
+import { getAllWorks, getWorkBySlug, getRelated } from "../../lib/server/content";
 
 function YouTubeEmbed({ id }) {
   if (!id) return null;
@@ -9,7 +9,7 @@ function YouTubeEmbed({ id }) {
       <iframe
         className="w-full h-full"
         src={`https://www.youtube.com/embed/${id}`}
-        title="YouTube video player"
+        title="YouTube player"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
@@ -29,16 +29,7 @@ export default function WorkPage({ work, related }) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
           <div>
-            {!firstId && (
-              <img
-                src={work.thumb || '/Logo.png'}
-                alt={work.title}
-                className="w-full rounded-xl ring-1 ring-white/10 mb-4"
-              />
-            )}
-
             <YouTubeEmbed id={firstId} />
-
             <h1 className="text-3xl font-bold mt-6">{work.title}</h1>
             <p className="mt-2 text-neutral-300">
               {(work.media || work.medium) ? `${work.media || work.medium} • ` : ''}{(work.genres || []).join(', ')}
@@ -52,12 +43,7 @@ export default function WorkPage({ work, related }) {
                   {work.episodes.map((ep, i) => (
                     <li key={ep.youtubeId} className="flex items-center gap-3">
                       <span className="text-sm opacity-70 w-6">{i + 1}.</span>
-                      <a
-                        className="underline hover:text-fuchsia-400"
-                        href={`https://youtu.be/${ep.youtubeId}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
+                      <a className="underline hover:text-fuchsia-400" href={`https://youtu.be/${ep.youtubeId}`} target="_blank" rel="noreferrer">
                         {ep.title}
                       </a>
                     </li>
@@ -71,17 +57,8 @@ export default function WorkPage({ work, related }) {
             <h3 className="text-lg font-semibold mb-3">Relacionados</h3>
             <div className="grid gap-4">
               {related.map(r => (
-                <a
-                  key={r.slug}
-                  href={`/obra/${r.slug}`}
-                  className="flex items-center gap-3 rounded-lg ring-1 ring-white/10 hover:ring-fuchsia-500 transition p-2"
-                >
-                  <img
-                    src={r.thumb || '/Logo.png'}
-                    alt={r.title}
-                    className="w-24 h-16 object-cover rounded-md"
-                    loading="lazy"
-                  />
+                <a key={r.slug} href={`/obra/${r.slug}`} className="flex items-center gap-3 rounded-lg ring-1 ring-white/10 hover:ring-fuchsia-500 transition p-2">
+                  <img src={r.thumb || '/Logo.png'} alt={r.title} className="w-24 h-16 object-cover rounded-md" loading="lazy" />
                   <div className="min-w-0">
                     <p className="font-medium truncate">{r.title}</p>
                     <p className="text-xs opacity-70 truncate">
@@ -100,10 +77,7 @@ export default function WorkPage({ work, related }) {
 
 export async function getStaticPaths() {
   const works = getAllWorks();
-  return {
-    paths: works.map(w => ({ params: { slug: w.slug } })),
-    fallback: false
-  };
+  return { paths: works.map(w => ({ params: { slug: w.slug } })), fallback: false };
 }
 
 export async function getStaticProps({ params }) {
