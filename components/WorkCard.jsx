@@ -1,3 +1,4 @@
+// components/WorkCard.jsx
 import Link from 'next/link';
 
 const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
@@ -18,7 +19,8 @@ export default function WorkCard({ item }) {
             {item.title}
           </div>
           <div className="text-xs text-neutral-400 mt-1">
-            {item.medium} {item.genres?.length ? `• ${Array.isArray(item.genres) ? item.genres.join(', ') : item.genres}` : ''}
+            {(item.media || item.medium) || ''}
+            {item.genres?.length ? ` • ${Array.isArray(item.genres) ? item.genres.join(', ') : item.genres}` : ''}
           </div>
         </div>
       </div>
