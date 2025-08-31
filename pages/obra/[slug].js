@@ -1,15 +1,21 @@
-import Layout from '@/components/Layout';
-import Image from 'next/image';
+import Layout from '../../components/Layout';
 
-// helper para miniaturas de YouTube
 const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 
 export default function WorkPage({ work }) {
-  if (!work) return <Layout><div className="max-w-6xl mx-auto p-6">No encontrado.</div></Layout>;
+  if (!work) {
+    return (
+      <Layout>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          No encontrado.
+        </div>
+      </Layout>
+    );
+  }
 
+  const first = work.episodes?.[0];
   const banner =
-    work.banner ||
-    (work.episodes?.[0]?.youtubeId ? ytThumb(work.episodes[0].youtubeId) : '/Logo.png');
+    work.banner || (first?.youtubeId ? ytThumb(first.youtubeId) : '/Logo.png');
 
   return (
     <Layout>
@@ -28,7 +34,8 @@ export default function WorkPage({ work }) {
             <div className="absolute left-6 right-6 bottom-6">
               <div className="text-2xl sm:text-3xl font-bold text-white">{work.title}</div>
               <div className="mt-1 text-sm text-neutral-300">
-                {work.type} • {work.medium} • {Array.isArray(work.genres) ? work.genres.join(', ') : work.genres}
+                {work.type} • {work.medium}
+                {work.genres?.length ? ` • ${Array.isArray(work.genres) ? work.genres.join(', ') : work.genres}` : ''}
               </div>
             </div>
           </div>
@@ -42,14 +49,14 @@ export default function WorkPage({ work }) {
               <p className="text-neutral-300 leading-relaxed mb-4">{work.description}</p>
             )}
 
-            {/* Episodios */}
+            {/* Episodios (para Series) */}
             {Array.isArray(work.episodes) && work.episodes.length > 0 && (
               <>
                 <h2 className="text-white font-semibold mb-3">Episodios</h2>
                 <div className="grid sm:grid-cols-2 gap-4">
-                  {work.episodes.map((ep) => (
+                  {work.episodes.map((ep, idx) => (
                     <a
-                      key={ep.youtubeId}
+                      key={ep.youtubeId || idx}
                       href={`https://www.youtube.com/watch?v=${ep.youtubeId}`}
                       target="_blank"
                       rel="noreferrer"
@@ -63,7 +70,7 @@ export default function WorkPage({ work }) {
                       />
                       <div className="p-3">
                         <div className="text-neutral-200 font-medium line-clamp-1">
-                          {ep.title || 'Episodio'}
+                          {ep.title || `Episodio ${idx + 1}`}
                         </div>
                         <div className="text-xs text-neutral-400 mt-1">YouTube</div>
                       </div>
@@ -112,21 +119,21 @@ export default function WorkPage({ work }) {
   );
 }
 
-// ================== DATA (SSG) ==================
+/* ======= DATA SSG ======= */
 export async function getStaticPaths() {
-  const { getAllWorks } = await import('@/lib/server/content'); // carga solo en build/server
+  const { getAllWorks } = await import('../../lib/server/content');
   const all = await getAllWorks();
   const paths = all.map((w) => ({ params: { slug: w.slug } }));
   return { paths, fallback: false };
 }
 
 export async function getStaticProps({ params }) {
-  const { getAllWorks } = await import('@/lib/server/content');
+  const { getAllWorks } = await import('../../lib/server/content');
   const all = await getAllWorks();
   const work = all.find((w) => w.slug === params.slug) || null;
 
   return {
     props: { work },
-    revalidate: 60, // ISR
+    revalidate: 60,
   };
 }
