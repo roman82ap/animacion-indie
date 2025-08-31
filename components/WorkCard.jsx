@@ -1,38 +1,26 @@
-// components/WorkCard.jsx
-import Link from "next/link";
+import Link from 'next/link';
 
 export default function WorkCard({ item }) {
-  // thumb: banner si existe; si no, miniatura del primer video
   const thumb =
-    item.banner ||
-    (item.episodes?.[0]?.thumb ??
-      (item.episodes?.[0]?.youtubeId
-        ? `https://i.ytimg.com/vi/${item.episodes[0].youtubeId}/hqdefault.jpg`
-        : "/Logo.png"));
+    (item.episodes && item.episodes[0]?.youtubeId)
+      ? `https://i.ytimg.com/vi/${item.episodes[0].youtubeId}/hqdefault.jpg`
+      : '/Logo.png';
 
   return (
-    <Link
-      href={`/obra/${item.slug}`}
-      className="group block rounded-xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10 transition"
-    >
-      <div className="aspect-video w-full overflow-hidden bg-black">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={thumb}
-          alt={item.title}
-          className="h-full w-full object-cover group-hover:scale-[1.02] transition"
-          loading="lazy"
+    <Link href={`/obra/${item.slug}`} className="block group">
+      <div className="rounded-xl overflow-hidden bg-neutral-900 ring-1 ring-neutral-800/70 hover:ring-fuchsia-500/40 transition">
+        <div
+          className="aspect-[16/9] bg-neutral-800 bg-center bg-cover"
+          style={{ backgroundImage: `url(${thumb})` }}
         />
-      </div>
-      <div className="p-3">
-        <h3 className="text-white text-base font-semibold line-clamp-1">
-          {item.title}
-        </h3>
-        {item.genres?.length ? (
-          <p className="mt-1 text-xs text-white/60 line-clamp-1">
-            {item.genres.join(" • ")}
-          </p>
-        ) : null}
+        <div className="p-3">
+          <div className="text-white font-semibold group-hover:text-fuchsia-300 transition line-clamp-1">
+            {item.title}
+          </div>
+          <div className="text-xs text-neutral-400 mt-1">
+            {item.medium} • {Array.isArray(item.genres) ? item.genres.join(', ') : item.genres}
+          </div>
+        </div>
       </div>
     </Link>
   );
