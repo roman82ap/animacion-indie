@@ -1,48 +1,39 @@
 // pages/index.js
-import path from "path";
-import fs from "fs";
+import Link from 'next/link';
+import Layout from '@/components/Layout';
+import catalog from '@/data/catalog.json';
 
-import TopTabs from "../components/TopTabs";
-import HeroCarousel from "../components/HeroCarousel";
-import YouTubeGrid from "../components/YouTubeGrid";
-import { FEATURED } from "../data/catalog"; // 👈 los destacados vienen del catálogo
-
-export default function Home({ banners }) {
+export default function Home() {
+  const works = catalog.works || [];
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
-      {/* Botonera arriba */}
-      <TopTabs />
+    <Layout>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-3xl font-bold mb-6">Últimos contenidos</h1>
 
-      {/* Carrusel de banners */}
-      <HeroCarousel items={banners} auto interval={6000} showCounter showArrows />
-
-      {/* Miniaturas de 4 obras destacadas */}
-      <YouTubeGrid items={FEATURED} />
-    </div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {works.map(item => (
+            <Link
+              key={item.slug}
+              href={`/obra/${item.slug}`}
+              className="block rounded-xl overflow-hidden bg-neutral-800 hover:bg-neutral-700 ring-1 ring-white/10 hover:ring-fuchsia-500 transition"
+            >
+              <img
+                src={item.thumb || '/Logo.png'}
+                alt={item.title}
+                className="w-full aspect-video object-cover"
+                loading="lazy"
+              />
+              <div className="p-3">
+                <h3 className="font-semibold">{item.title}</h3>
+                <p className="text-xs text-neutral-300 mt-1">
+                  {item.media ? `${item.media} • ` : ''}
+                  {(item.genres || []).join(', ')}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </Layout>
   );
-}
-
-// Genera la lista de banners automáticamente desde /public/banner
-export async function getStaticProps() {
-  const bannersDir = path.join(process.cwd(), "public", "banner");
-  let files = [];
-  try {
-    files = await fs.promises.readdir(bannersDir);
-  } catch (e) {
-    console.warn("No se pudo leer /public/banner:", e.message);
-  }
-
-  const allowed = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif"]);
-  const banners = files
-    .filter((name) => allowed.has(path.extname(name).toLowerCase()))
-    .sort()
-    .map((name) => ({
-      id: name.replace(path.extname(name), ""),
-      title: name.replace(path.extname(name), "").replace(/[-_]+/g, " "),
-      banner: `/banner/${name}`,
-      href: "#",
-      badges: [],
-    }));
-
-  return { props: { banners }, revalidate: 60 };
 }
