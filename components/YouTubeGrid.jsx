@@ -1,47 +1,35 @@
-// components/YouTubeGrid.jsx
-import Link from "next/link";
-import { ytThumb } from "../data/catalog";
-
 export default function YouTubeGrid({ items = [] }) {
+  if (!items.length) return null;
   return (
-    <section className="mt-6">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-bold">Últimos trailers</h2>
-        <a
-          href="/trailers"
-          className="text-sm text-fuchsia-400 hover:underline"
-        >
-          Ver todos →
-        </a>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {items.map((v) => (
-          <Link
-            key={v.slug}
-            href={`/obra/${v.slug}`}
-            className="group relative rounded-xl overflow-hidden border border-neutral-800 bg-neutral-900"
-            title={v.title}
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {items.map((w) => {
+        const first = Array.isArray(w.episodes) ? w.episodes[0] : null;
+        const id = first?.youtubeId;
+        const thumb = id
+          ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`
+          : (w.thumb || "/Logo.png");
+        return (
+          <a
+            key={w.slug}
+            href={`/obra/${w.slug}`}
+            className="group rounded-xl overflow-hidden ring-1 ring-white/10 hover:ring-brand-500 transition"
           >
-            <div className="relative">
-              <img
-                src={ytThumb(v.youtubeId)}
-                alt={v.title}
-                className="h-48 w-full object-cover transition group-hover:scale-[1.02]"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition grid place-items-center">
-                <div className="h-12 w-12 rounded-full bg-white/90 text-black grid place-items-center text-xl font-bold">
-                  ▶
-                </div>
-              </div>
+            <img
+              src={thumb}
+              alt={w.title}
+              className="w-full aspect-video object-cover group-hover:opacity-90"
+              loading="lazy"
+            />
+            <div className="p-3">
+              <h3 className="font-medium truncate">{w.title}</h3>
+              <p className="text-xs opacity-70 truncate">
+                {(w.media || w.medium) ? `${w.media || w.medium} • ` : ""}
+                {(w.genres || []).join(", ")}
+              </p>
             </div>
-            <div className="px-3 py-2 text-sm text-neutral-200 truncate">
-              {v.title}
-            </div>
-          </Link>
-        ))}
-      </div>
-    </section>
+          </a>
+        );
+      })}
+    </div>
   );
 }
