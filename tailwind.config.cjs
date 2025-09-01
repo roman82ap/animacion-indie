@@ -1,12 +1,17 @@
-// tailwind.config.cjs
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./pages/**/*.{js,jsx,ts,tsx}",
-    "./components/**/*.{js,jsx,ts,tsx}",
+    "./pages/**/*.{js,jsx}",
+    "./components/**/*.{js,jsx}"
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        brand: {
+          500: "#a21caf" // fucsia violeta
+        }
+      }
+    }
   },
-  plugins: [],
+  plugins: []
 };
