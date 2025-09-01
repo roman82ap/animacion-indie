@@ -1,24 +1,18 @@
-// components/Navbar.js
-import Link from 'next/link';
-import Image from 'next/image';
-
 export default function Navbar() {
   return (
-    <nav className="bg-black/70 backdrop-blur sticky top-0 z-40">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src="/Logo.png" alt="Veridion23" width={36} height={36} priority />
-          <span className="font-semibold text-fuchsia-400 hidden sm:inline">Veridion23</span>
-        </Link>
-
-        <div className="flex items-center gap-2">
-          <Link href="/" className="px-3 py-1 rounded-full ring-1 ring-white/10 hover:ring-fuchsia-500 transition text-sm">Inicio</Link>
-          <Link href="/series" className="px-3 py-1 rounded-full ring-1 ring-white/10 hover:ring-fuchsia-500 transition text-sm">Series</Link>
-          <Link href="/cortos" className="px-3 py-1 rounded-full ring-1 ring-white/10 hover:ring-fuchsia-500 transition text-sm">Cortos</Link>
-          <Link href="/peliculas" className="px-3 py-1 rounded-full ring-1 ring-white/10 hover:ring-fuchsia-500 transition text-sm">Películas</Link>
-          <Link href="/trailers" className="px-3 py-1 rounded-full ring-1 ring-white/10 hover:ring-fuchsia-500 transition text-sm">Trailers</Link>
-        </div>
+    <header className="sticky top-0 z-50 bg-neutral-950/80 backdrop-blur border-b border-white/10">
+      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
+        <a href="/" className="flex items-center gap-3">
+          <img src="/Logo.png" alt="Veridion23" className="h-7 w-auto" />
+          <span className="font-semibold tracking-wide">VERIDION23</span>
+        </a>
+        <nav className="flex gap-4 text-sm">
+          <a href="/series" className="hover:text-brand-500">Series</a>
+          <a href="/cortos" className="hover:text-brand-500">Cortos</a>
+          <a href="/peliculas" className="hover:text-brand-500">Películas</a>
+          <a href="/trailers" className="hover:text-brand-500">Trailers</a>
+        </nav>
       </div>
-    </nav>
+    </header>
   );
 }
