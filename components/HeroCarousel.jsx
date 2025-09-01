@@ -1,69 +1,29 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function HeroCarousel({
-  items = [],
-  auto = true,
-  interval = 6000,
-  showCounter = true,
-  showArrows = true,
-}) {
-  const total = items.length;
+export default function HeroCarousel({ items = [] }) {
   const [i, setI] = useState(0);
-
-  const next = () => setI((p) => (p + 1) % total);
-  const prev = () => setI((p) => (p - 1 + total) % total);
-
   useEffect(() => {
-    if (!auto || total <= 1) return;
-    const t = setInterval(next, interval);
+    if (!items.length) return;
+    const t = setInterval(() => setI((p) => (p + 1) % items.length), 4000);
     return () => clearInterval(t);
-  }, [total, auto, interval]);
+  }, [items.length]);
 
-  const current = useMemo(() => items[i] || null, [i, items]);
-
-  if (!current) return null;
+  if (!items.length) return null;
+  const current = items[i];
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-neutral-800">
-      {/* SOLO IMAGEN */}
-      <a href={current.href || "#"} className="block">
-        <div className="relative w-full" style={{ aspectRatio: "16 / 6" }}>
-          <img
-            src={current.banner}
-            alt={current.title || ""}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          {/* Si no quieres ningún oscurecido, deja esto comentado o elimínalo */}
-          {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" /> */}
-        </div>
+    <div className="relative rounded-2xl overflow-hidden ring-1 ring-white/10">
+      <a href={`/obra/${current.slug}`}>
+        <img
+          src={current.thumb || "/Logo.png"}
+          alt={current.title}
+          className="w-full h-[38vh] md:h-[46vh] object-cover"
+        />
       </a>
 
-      {/* Contador opcional */}
-      {showCounter && (
-        <div className="absolute left-4 top-4 bg-black/70 backdrop-blur px-2.5 py-1.5 rounded-md text-xs">
-          {String(i + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
-        </div>
-      )}
-
-      {/* Flechas opcionales */}
-      {showArrows && total > 1 && (
-        <>
-          <button
-            aria-label="Anterior"
-            onClick={prev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/60 hover:bg-black/80 p-2"
-          >
-            ‹
-          </button>
-          <button
-            aria-label="Siguiente"
-            onClick={next}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/60 hover:bg-black/80 p-2"
-          >
-            ›
-          </button>
-        </>
-      )}
+      <div className="absolute bottom-3 right-3 bg-black/60 text-xs px-2 py-1 rounded">
+        {i + 1}/{items.length}
+      </div>
     </div>
   );
 }
