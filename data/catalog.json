@@ -7,6 +7,7 @@
       "media": "3D",
       "genres": ["Acción", "Comedia", "Sci-Fi", "Aventura"],
       "description": "Un grupo elite se encarga de eliminar la amenaza.",
+      "thumb": "https://i.ytimg.com/vi/7QF7j8axtl4/hqdefault.jpg",
       "episodes": [
         { "title": "Trailer Oficial", "youtubeId": "7QF7j8axtl4" },
         { "title": "Leoric Trailer", "youtubeId": "lS8Is7zlJC0" }
@@ -19,9 +20,10 @@
       "media": "2D",
       "genres": ["Acción", "Comedia"],
       "description": "Una serie animada completamente desde un celular.",
+      "thumb": "https://i.ytimg.com/vi/8pr352T1Ae4/hqdefault.jpg",
       "episodes": [
-        { "title": "Crunch Episodio 01", "youtubeId": "8pr352T1Ae4" },
-        { "title": "Crunch Episodio 02", "youtubeId": "iK8kY6CWRp4" }
+        { "title": "Episodio 01", "youtubeId": "8pr352T1Ae4" },
+        { "title": "Episodio 02", "youtubeId": "iK8kY6CWRp4" }
       ]
     },
     {
@@ -31,6 +33,7 @@
       "media": "2D",
       "genres": ["Acción", "Comedia", "Aventura"],
       "description": "Un stickman gris intenta pintar un futuro dorado.",
+      "thumb": "https://i.ytimg.com/vi/X7Arrfu9l30/hqdefault.jpg",
       "episodes": [
         { "title": "Story #0 - Gets Up", "youtubeId": "X7Arrfu9l30" },
         { "title": "Story #1 - vs Fry", "youtubeId": "KFqsbjX8aLs" }
