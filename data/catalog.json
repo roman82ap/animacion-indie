@@ -21,10 +21,7 @@
       "description": "Una serie animada completamente desde un celular.",
       "episodes": [
         { "title": "Crunch Episodio 01", "youtubeId": "8pr352T1Ae4" },
-        { "title": "Crunch Episodio 02", "youtubeId": "iK8kY6CWRp4" },
-        { "title": "Crunch Episodio 03", "youtubeId": "6N7oNg7aDwY" },
-        { "title": "Crunch Episodio 04", "youtubeId": "sU5Qo3gsf6g" },
-        { "title": "Crunch Opening", "youtubeId": "6N7oNg7aDwY" }
+        { "title": "Crunch Episodio 02", "youtubeId": "iK8kY6CWRp4" }
       ]
     },
     {
@@ -36,9 +33,7 @@
       "description": "Un stickman gris intenta pintar un futuro dorado.",
       "episodes": [
         { "title": "Story #0 - Gets Up", "youtubeId": "X7Arrfu9l30" },
-        { "title": "Story #1 - vs Fry", "youtubeId": "KFqsbjX8aLs" },
-        { "title": "Story #2 - vs Jade", "youtubeId": "AQrfhjahsTQ" },
-        { "title": "Story #3 - Basement Busk", "youtubeId": "IMcVQo1CRNA" }
+        { "title": "Story #1 - vs Fry", "youtubeId": "KFqsbjX8aLs" }
       ]
     }
   ]
