@@ -2,7 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #__next {
+  height: 100%;
+}
 body {
   @apply bg-neutral-950 text-neutral-100;
-  font-family: 'Poppins', sans-serif;
+}
+a {
+  @apply text-brand-500;
 }
